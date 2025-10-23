@@ -20,8 +20,8 @@ export function Sidebar({
     return (
         <div className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col">
             {/* Logo/Brand */}
-            <div className="p-6 border-b border-gray-200 items-center flex flex-col">
-                <h2 className="text-green-800 font-bold">Qomar Qur'on Markazi</h2>
+            <div className="p-5 border-b border-gray-200 items-center flex flex-col">
+                <h2 className="text-green-800 font-bold h-6">Qomar Qur'on Markazi</h2>
             </div>
 
             {/* Menu Items */}

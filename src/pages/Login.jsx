@@ -57,9 +57,15 @@ export default function Login() {
         <>
             <div className="min-h-screen flex items-center justify-center bg-green-200">
 
-                {logErr && LoginErr(handleErrorClose)}
+                {logErr && <LoginErr onClose={handleErrorClose} />}
 
-                {LogInForm({ handleSubmit, username, setPassword, setUsername, password, loading })}
+                {<LogInForm
+                    handleSubmit={handleSubmit}
+                    username={username}
+                    setUsername={setUsername}
+                    setPassword={setPassword}
+                    password={password}
+                    loading={loading} />}
             </div>
         </>
     );
