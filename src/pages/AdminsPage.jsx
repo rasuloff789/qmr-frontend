@@ -1,5 +1,6 @@
 import AdminsTable from "../components/AdminsTable";
 import SearchAdminInput from "../components/SearchAdmin";
+import AddAdmin from "../components/AddAdmin";
 import { useQuery } from "@apollo/client/react";
 import { useState, useEffect } from "react";
 import { gql } from "@apollo/client";
@@ -52,7 +53,11 @@ export default function () {
 
     return (
         <>
-            <SearchAdminInput search={search} AdminSearch={AdminSearch} />
+            <div className="flex justify-between items-center">
+                <SearchAdminInput search={search} AdminSearch={AdminSearch} />
+                <AddAdmin />
+            </div>
+
             <AdminsTable loading={loading} admins={admins} />
         </>
     )

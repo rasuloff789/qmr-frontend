@@ -69,7 +69,7 @@ const AdminsTable = function AdminsTable({ loading, admins }) {
         </div>}
         {
             !loading && !admins.length && (
-                <div className="flex-1 flex items-center justify-center h-64 shadow-md border-gray-600 border sm:rounded-lg m-4 text-gray-500 text-lg">
+                <div className="flex-1 flex items-center justify-center h-64 shadow-md border-gray-600 border sm:rounded-lg text-gray-500 text-lg">
                     {t("noAdmins")}
                 </div>
             )
