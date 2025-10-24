@@ -9,13 +9,38 @@ import {
     Settings,
 } from "lucide-react";
 import checkUser from "../utils/checkUser";
-
 import { t } from "i18next";
+import { useNavigate, useLocation } from "react-router-dom";
 
-export function Sidebar({
-    activePage,
-    onNavigate,
-}) {
+export function Sidebar() {
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    // ✅ active sahifani aniqlash - improved logic
+    const getActivePage = () => {
+        const path = location.pathname;
+
+        // Handle specific routes
+        if (path === "/") return "dashboard";
+        if (path.startsWith("/admins")) return "admins";
+        if (path.startsWith("/admin/")) return "admins"; // admin detail pages should highlight admins
+        if (path.startsWith("/students")) return "students";
+        if (path.startsWith("/courses")) return "courses";
+        if (path.startsWith("/teachers")) return "teachers";
+        if (path.startsWith("/payments")) return "payments";
+        if (path.startsWith("/settings")) return "settings";
+
+        // Fallback to first path segment
+        return path.split("/")[1] || "dashboard";
+    };
+
+    const activePage = getActivePage();
+
+    const handleClick = (e) => {
+        const key = e.currentTarget.getAttribute("data-key");
+        navigate(`/${key}`);
+    };
+
 
     return (
         <div className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col">
@@ -27,8 +52,8 @@ export function Sidebar({
             {/* Menu Items */}
             <nav className="flex-1 p-4 space-y-1">
                 <button
-                    key="dashboard"
-                    onClick={() => onNavigate("dashboard")}
+                    data-key="dashboard"
+                    onClick={handleClick}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activePage === "dashboard"
                         ? "bg-blue-50 text-blue-600"
                         : "text-gray-600 hover:bg-gray-50"
@@ -37,8 +62,8 @@ export function Sidebar({
                     <span>{t("dashboard")}</span>
                 </button>
                 {checkUser(["root"]) && <button
-                    key="admins"
-                    onClick={() => onNavigate("admins")}
+                    data-key="admins"
+                    onClick={handleClick}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activePage === "admins"
                         ? "bg-blue-50 text-blue-600"
                         : "text-gray-600 hover:bg-gray-50"
@@ -47,8 +72,8 @@ export function Sidebar({
                     <span>{t("admins")}</span>
                 </button>}
                 {checkUser(["root", "admin", "teacher"]) && <button
-                    key="students"
-                    onClick={() => onNavigate("students")}
+                    data-key="students"
+                    onClick={handleClick}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activePage === "students"
                         ? "bg-blue-50 text-blue-600"
                         : "text-gray-600 hover:bg-gray-50"
@@ -57,8 +82,8 @@ export function Sidebar({
                     <span>{t("students")}</span>
                 </button>}
                 {checkUser(["root", "admin", "teacher"]) && <button
-                    key="courses"
-                    onClick={() => onNavigate("courses")}
+                    data-key="courses"
+                    onClick={handleClick}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activePage === "courses"
                         ? "bg-blue-50 text-blue-600"
                         : "text-gray-600 hover:bg-gray-50"
@@ -67,8 +92,8 @@ export function Sidebar({
                     <span>{t("courses")}</span>
                 </button>}
                 {checkUser(["root", "admin"]) && <button
-                    key="teachers"
-                    onClick={() => onNavigate("teachers")}
+                    data-key="teachers"
+                    onClick={handleClick}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activePage === "teachers"
                         ? "bg-blue-50 text-blue-600"
                         : "text-gray-600 hover:bg-gray-50"
@@ -77,8 +102,8 @@ export function Sidebar({
                     <span>{t("teachers")}</span>
                 </button>}
                 {checkUser(["root", "admin"]) && <button
-                    key="payments"
-                    onClick={() => onNavigate("payments")}
+                    data-key="payments"
+                    onClick={handleClick}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activePage === "payments"
                         ? "bg-blue-50 text-blue-600"
                         : "text-gray-600 hover:bg-gray-50"
@@ -92,7 +117,8 @@ export function Sidebar({
             {/* Settings at bottom */}
             <div className="p-4 border-t border-gray-200">
                 <button
-                    onClick={() => onNavigate("settings")}
+                    data-key="settings"
+                    onClick={handleClick}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activePage === "settings"
                         ? "bg-blue-50 text-blue-600"
                         : "text-gray-600 hover:bg-gray-50"
