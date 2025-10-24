@@ -4,6 +4,40 @@
   html, body {
     @apply min-h-screen bg-white text-gray-900;
   }
+  
+  /* Direct CSS for Safari dark mode - no Tailwind classes */
+  html.dark {
+    background-color: #111827 !important;
+    color: #ffffff !important;
+    color-scheme: dark !important;
+  }
+  
+  html.dark body {
+    background-color: #111827 !important;
+    color: #ffffff !important;
+  }
+  
+  html.dark #root {
+    background-color: #111827 !important;
+    color: #ffffff !important;
+  }
+  
+  /* Force light mode */
+  html:not(.dark) {
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    color-scheme: light !important;
+  }
+  
+  html:not(.dark) body {
+    background-color: #ffffff !important;
+    color: #111827 !important;
+  }
+  
+  html:not(.dark) #root {
+    background-color: #ffffff !important;
+    color: #111827 !important;
+  }
 }
 
 @layer components {
