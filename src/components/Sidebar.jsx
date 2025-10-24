@@ -11,10 +11,12 @@ import {
 import checkUser from "../utils/checkUser";
 import { t } from "i18next";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useDarkMode } from "../contexts/DarkModeContext";
 
 export function Sidebar() {
     const navigate = useNavigate();
     const location = useLocation();
+    const { isDarkMode } = useDarkMode();
 
     // ✅ active sahifani aniqlash - improved logic
     const getActivePage = () => {
@@ -43,10 +45,23 @@ export function Sidebar() {
 
 
     return (
-        <div className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col">
+        <div
+            className="w-64 h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col"
+            style={{
+                backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
+                borderColor: isDarkMode ? '#374151' : '#e5e7eb'
+            }}
+        >
             {/* Logo/Brand */}
-            <div className="p-5 border-b border-gray-200 items-center flex flex-col">
-                <h2 className="text-green-800 font-bold h-6">Qomar Qur'on Markazi</h2>
+            <div className="p-5 border-b border-gray-200 dark:border-gray-700 items-center flex flex-col">
+                <h2
+                    className="text-green-800 dark:text-green-400 font-bold h-6"
+                    style={{
+                        color: isDarkMode ? '#10b981' : '#166534'
+                    }}
+                >
+                    Qomar Qur'on Markazi
+                </h2>
             </div>
 
             {/* Menu Items */}
@@ -55,9 +70,18 @@ export function Sidebar() {
                     data-key="dashboard"
                     onClick={handleClick}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activePage === "dashboard"
-                        ? "bg-blue-50 text-blue-600"
-                        : "text-gray-600 hover:bg-gray-50"
-                        }`}>
+                        ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        }`}
+                    style={{
+                        backgroundColor: activePage === "dashboard"
+                            ? (isDarkMode ? '#1e3a8a' : '#eff6ff')
+                            : (isDarkMode ? 'transparent' : 'transparent'),
+                        color: activePage === "dashboard"
+                            ? (isDarkMode ? '#60a5fa' : '#2563eb')
+                            : (isDarkMode ? '#d1d5db' : '#4b5563')
+                    }}
+                >
                     <LayoutDashboard className="w-5 h-5" />
                     <span>{t("dashboard")}</span>
                 </button>
@@ -65,9 +89,18 @@ export function Sidebar() {
                     data-key="admins"
                     onClick={handleClick}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activePage === "admins"
-                        ? "bg-blue-50 text-blue-600"
-                        : "text-gray-600 hover:bg-gray-50"
-                        }`}>
+                        ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        }`}
+                    style={{
+                        backgroundColor: activePage === "admins"
+                            ? (isDarkMode ? '#1e3a8a' : '#eff6ff')
+                            : (isDarkMode ? 'transparent' : 'transparent'),
+                        color: activePage === "admins"
+                            ? (isDarkMode ? '#60a5fa' : '#2563eb')
+                            : (isDarkMode ? '#d1d5db' : '#4b5563')
+                    }}
+                >
                     <Users className="w-5 h-5" />
                     <span>{t("admins")}</span>
                 </button>}
@@ -75,9 +108,18 @@ export function Sidebar() {
                     data-key="students"
                     onClick={handleClick}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activePage === "students"
-                        ? "bg-blue-50 text-blue-600"
-                        : "text-gray-600 hover:bg-gray-50"
-                        }`}>
+                        ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        }`}
+                    style={{
+                        backgroundColor: activePage === "students"
+                            ? (isDarkMode ? '#1e3a8a' : '#eff6ff')
+                            : (isDarkMode ? 'transparent' : 'transparent'),
+                        color: activePage === "students"
+                            ? (isDarkMode ? '#60a5fa' : '#2563eb')
+                            : (isDarkMode ? '#d1d5db' : '#4b5563')
+                    }}
+                >
                     <GraduationCap className="w-5 h-5" />
                     <span>{t("students")}</span>
                 </button>}
@@ -85,9 +127,18 @@ export function Sidebar() {
                     data-key="courses"
                     onClick={handleClick}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activePage === "courses"
-                        ? "bg-blue-50 text-blue-600"
-                        : "text-gray-600 hover:bg-gray-50"
-                        }`}>
+                        ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        }`}
+                    style={{
+                        backgroundColor: activePage === "courses"
+                            ? (isDarkMode ? '#1e3a8a' : '#eff6ff')
+                            : (isDarkMode ? 'transparent' : 'transparent'),
+                        color: activePage === "courses"
+                            ? (isDarkMode ? '#60a5fa' : '#2563eb')
+                            : (isDarkMode ? '#d1d5db' : '#4b5563')
+                    }}
+                >
                     <BookOpen className="w-5 h-5" />
                     <span>{t("courses")}</span>
                 </button>}
@@ -95,9 +146,18 @@ export function Sidebar() {
                     data-key="teachers"
                     onClick={handleClick}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activePage === "teachers"
-                        ? "bg-blue-50 text-blue-600"
-                        : "text-gray-600 hover:bg-gray-50"
-                        }`}>
+                        ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        }`}
+                    style={{
+                        backgroundColor: activePage === "teachers"
+                            ? (isDarkMode ? '#1e3a8a' : '#eff6ff')
+                            : (isDarkMode ? 'transparent' : 'transparent'),
+                        color: activePage === "teachers"
+                            ? (isDarkMode ? '#60a5fa' : '#2563eb')
+                            : (isDarkMode ? '#d1d5db' : '#4b5563')
+                    }}
+                >
                     <UserCircle className="w-5 h-5" />
                     <span>{t("teachers")}</span>
                 </button>}
@@ -105,9 +165,18 @@ export function Sidebar() {
                     data-key="payments"
                     onClick={handleClick}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activePage === "payments"
-                        ? "bg-blue-50 text-blue-600"
-                        : "text-gray-600 hover:bg-gray-50"
-                        }`}>
+                        ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        }`}
+                    style={{
+                        backgroundColor: activePage === "payments"
+                            ? (isDarkMode ? '#1e3a8a' : '#eff6ff')
+                            : (isDarkMode ? 'transparent' : 'transparent'),
+                        color: activePage === "payments"
+                            ? (isDarkMode ? '#60a5fa' : '#2563eb')
+                            : (isDarkMode ? '#d1d5db' : '#4b5563')
+                    }}
+                >
                     <CreditCard className="w-5 h-5" />
                     <span>{t("payments")}</span>
                 </button>}
@@ -115,14 +184,22 @@ export function Sidebar() {
             </nav>
 
             {/* Settings at bottom */}
-            <div className="p-4 border-t border-gray-200">
+            <div className="p-4 border-t border-gray-200 dark:border-gray-700">
                 <button
                     data-key="settings"
                     onClick={handleClick}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activePage === "settings"
-                        ? "bg-blue-50 text-blue-600"
-                        : "text-gray-600 hover:bg-gray-50"
+                        ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                         }`}
+                    style={{
+                        backgroundColor: activePage === "settings"
+                            ? (isDarkMode ? '#1e3a8a' : '#eff6ff')
+                            : (isDarkMode ? 'transparent' : 'transparent'),
+                        color: activePage === "settings"
+                            ? (isDarkMode ? '#60a5fa' : '#2563eb')
+                            : (isDarkMode ? '#d1d5db' : '#4b5563')
+                    }}
                 >
                     <Settings className="w-5 h-5" />
                     <span>Sozlamalar</span>
