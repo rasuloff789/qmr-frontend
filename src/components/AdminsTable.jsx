@@ -27,11 +27,11 @@ const AdminsTable = function AdminsTable({ loading, admins, onAdminDeleted }) {
                         <th scope="col" className="px-4 font-mono font-medium py-3 text-center">{translate("actions")}</th>
                     </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                     {admins.map((admin) => (
                         <tr
                             key={admin.id}
-                            className="hover:bg-gray-100 hover:cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"
+                            className="hover:bg-gray-100 dark:hover:bg-gray-700 hover:cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"
                             onClick={() => handleRowClick(admin.id)}
                         >
                             <th scope="col" className="px-4 font-normal py-3">{admin.id}</th>
@@ -74,7 +74,7 @@ const AdminsTable = function AdminsTable({ loading, admins, onAdminDeleted }) {
         </div>}
         {
             !loading && !admins.length && (
-                <div className="flex-1 flex items-center justify-center h-64 shadow-md border-gray-600 border sm:rounded-lg text-gray-500 text-lg">
+                <div className="flex-1 flex items-center justify-center h-64 shadow-md border-gray-600 dark:border-gray-700 border sm:rounded-lg text-gray-500 dark:text-gray-400 text-lg">
                     {translate("noAdmins")}
                 </div>
             )
