@@ -1,4 +1,5 @@
-import { t } from "i18next";
+import { useTranslation as useTranslate } from "react-i18next";
+
 import { useState, useReducer, useCallback, useMemo } from "react";
 import PhoneNumberInput from "./PhoneNumberInput.jsx";
 import AdminInputs from "./AdminInputs.AddAdminModal.jsx";
@@ -71,11 +72,25 @@ const initialFormState = {
     errors: {}
 };
 
-export default function AddAdmin() {
+export default function AddAdmin({ onAdminAdded = null }) {
     const [formState, dispatch] = useReducer(formReducer, initialFormState);
-
+    const { t: translate } = useTranslate();
     // Mutation
-    const [addAdminMutation, { loading, error }] = useMutation(ADD_ADMIN);
+    const [addAdminMutation, { loading, error }] = useMutation(ADD_ADMIN, {
+        onCompleted: (data) => {
+            console.log("✅ Admin added successfully:", data);
+            // Clear form and close modal on success
+            dispatch({ type: 'CLEAR_FORM' });
+            dispatch({ type: 'SET_MODAL', open: false });
+            // Call the callback to refresh the admin list
+            if (onAdminAdded) {
+                onAdminAdded();
+            }
+        },
+        onError: (error) => {
+            console.error("❌ Add admin error:", error);
+        }
+    });
 
     // Memoized field setters for performance
     const setField = useCallback((field, value) => {
@@ -89,6 +104,7 @@ export default function AddAdmin() {
     // Optimized form submission with proper error handling
     const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
+        console.log("🚀 Form submitted with data:", formState);
 
         // Validate form inputs
         const newErrors = validateAdminInputs({
@@ -97,16 +113,28 @@ export default function AddAdmin() {
             password: formState.password,
             tgUsername: formState.tgUsername,
             phoneNumber: formState.phoneNumber,
+            birthDate: formState.birthDate?.toISOString().split("T")[0], // Convert Date to YYYY-MM-DD string
         });
 
+        console.log("🔍 Validation errors:", newErrors);
         dispatch({ type: 'SET_ERRORS', errors: newErrors });
 
         // Return early if validation fails
         if (Object.keys(newErrors).length > 0) {
+            console.log("❌ Validation failed, not submitting");
             return;
         }
 
         try {
+            console.log("📤 Sending mutation with variables:", {
+                username: formState.username,
+                password: formState.password,
+                fullname: formState.fullname,
+                tgUsername: formState.tgUsername,
+                birthDate: formState.birthDate?.toISOString().split("T")[0],
+                phone: `${formState.countryCode}${formState.phoneNumber}`,
+            });
+
             await addAdminMutation({
                 variables: {
                     username: formState.username,
@@ -117,12 +145,8 @@ export default function AddAdmin() {
                     phone: `${formState.countryCode}${formState.phoneNumber}`,
                 },
             });
-
-            // Clear form and close modal on success
-            dispatch({ type: 'CLEAR_FORM' });
-            dispatch({ type: 'SET_MODAL', open: false });
         } catch (err) {
-            console.error("Add admin error:", err.message);
+            console.error("❌ Add admin error:", err.message);
             // Handle error state if needed
         }
     }, [formState, addAdminMutation]);
@@ -156,8 +180,9 @@ export default function AddAdmin() {
         <DateTimeInput
             birthDate={formState.birthDate}
             setBirthDate={(value) => setField('birthDate', value)}
+            error={formState.errors.birthDate}
         />
-    ), [formState.birthDate, setField]);
+    ), [formState.birthDate, formState.errors.birthDate, setField]);
 
     return (
         <>
@@ -168,14 +193,14 @@ export default function AddAdmin() {
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
-                <span>{t("addAdmin")}</span>
+                <span>{translate("addAdmin")}</span>
             </button>
 
             {formState.open && (
                 <div className="overflow-y-auto fixed inset-0 z-50 flex justify-center items-center bg-black/50">
                     <div className="relative p-4 w-full max-w-md">
                         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                            <AddAdminFormHeader setOpen={(open) => setModal(open)} />
+                            <AddAdminFormHeader setOpen={(open) => setModal(open)} setField={setField} />
                             <form className="p-4 md:p-5" onSubmit={handleSubmit}>
                                 <div className="grid gap-4 mb-4 grid-cols-2">
                                     {memoizedAdminInputs}
@@ -195,12 +220,12 @@ export default function AddAdmin() {
                                             clipRule="evenodd"
                                         />
                                     </svg>
-                                    {loading ? t("adding") : t("addAdmin")}
+                                    {loading ? translate("adding") : translate("addAdmin")}
                                 </button>
 
                                 {error && (
                                     <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                                        {error.message}
+                                        <strong>{translate("error")}:</strong> {error.message}
                                     </div>
                                 )}
                             </form>
