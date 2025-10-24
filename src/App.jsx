@@ -1,9 +1,13 @@
 // App.jsx
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import RequireAuth from "./components/RequireAuth";
+import Layout from "./components/Layout";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
+import AdminsPage from "./pages/AdminsPage";
+import AdminPage from "./pages/AdminPage";
+import ComingSoonPage from "./pages/ComingSoonPage.jsx";
 
 export default function App() {
   return (
@@ -13,12 +17,22 @@ export default function App() {
 
         {/* barcha himoyalangan ruta uchun wrapper */}
         <Route element={<RequireAuth />}>
-          <Route path="/" element={<Home />} />
-          {/* boshqa himoyalangan route lar */}
+          <Route element={<Layout />}>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<Home />} />
+            <Route path="/admins" element={<AdminsPage />} />
+            <Route path="/admin/:id" element={<AdminPage />} />
+            {/* Placeholder routes to prevent login redirect */}
+            <Route path="/students" element={<ComingSoonPage titleKey="students" />} />
+            <Route path="/courses" element={<ComingSoonPage titleKey="courses" />} />
+            <Route path="/teachers" element={<ComingSoonPage titleKey="teachers" />} />
+            <Route path="/payments" element={<ComingSoonPage titleKey="payments" />} />
+            <Route path="/settings" element={<ComingSoonPage titleKey="settings" />} />
+          </Route>
         </Route>
 
-        {/* fallback */}
-        <Route path="*" element={<Login />} />
+        {/* fallback - redirect to login */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );
