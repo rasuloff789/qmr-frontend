@@ -1,25 +1,39 @@
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import ToggleButtonAdminsTable from "./ToggleButton.AdminsTable.jsx";
+import DeleteAdminButton from "./DeleteAdmin.AdminsTable.jsx";
 
-const AdminsTable = function AdminsTable({ loading, admins }) {
+const AdminsTable = function AdminsTable({ loading, admins, onAdminDeleted }) {
+    const navigate = useNavigate();
+    const { t: translate } = useTranslation();
 
+    const handleRowClick = (adminId) => {
+        console.log("🔍 AdminsTable - Navigating to admin:", adminId);
+        navigate(`/admin/${adminId}`);
+    };
 
     return (<>
         {!loading && admins.length > 0 && <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-blue-200 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
-                        <th scope="col" className="px-4 font-mono font-medium py-3">ID</th>
-                        <th scope="col" className="px-4 font-mono font-medium py-3">{t("fullname")}</th>
-                        <th scope="col" className="px-4 font-mono font-medium py-3">{t("username")}</th>
-                        <th scope="col" className="px-4 font-mono font-medium py-3">{t("phoneNumber")}</th>
-                        <th scope="col" className="px-4 font-mono font-medium py-3">Telegram</th>
-                        <th scope="col" className="px-4 font-mono font-medium py-3">{t("birthDate")}</th>
-                        <th scope="col" className="px-4 font-mono font-medium py-3 text-center">{t("active")}</th>
+                        <th scope="col" className="px-4 font-mono font-medium py-3">{translate("id")}</th>
+                        <th scope="col" className="px-4 font-mono font-medium py-3">{translate("fullname")}</th>
+                        <th scope="col" className="px-4 font-mono font-medium py-3">{translate("username")}</th>
+                        <th scope="col" className="px-4 font-mono font-medium py-3">{translate("phoneNumber")}</th>
+                        <th scope="col" className="px-4 font-mono font-medium py-3">{translate("telegram")}</th>
+                        <th scope="col" className="px-4 font-mono font-medium py-3">{translate("birthDate")}</th>
+                        <th scope="col" className="px-4 font-mono font-medium py-3 text-center">{translate("active")}</th>
+                        <th scope="col" className="px-4 font-mono font-medium py-3 text-center">{translate("actions")}</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                     {admins.map((admin) => (
-                        <tr key={admin.id} className="hover:bg-gray-100 hover:cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                        <tr
+                            key={admin.id}
+                            className="hover:bg-gray-100 hover:cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"
+                            onClick={() => handleRowClick(admin.id)}
+                        >
                             <th scope="col" className="px-4 font-normal py-3">{admin.id}</th>
                             <th scope="col" className="px-4 font-normal py-3">{admin.fullname}</th>
                             <th scope="col" className="px-4 font-normal py-3">{admin.username}</th>
@@ -33,35 +47,26 @@ const AdminsTable = function AdminsTable({ loading, admins }) {
                                     </svg>
                                 </a>
                             }</th>
-                            <th scope="col" className="px-4 font-normal py-3">{admin.birthDate}</th>
-                            <th scope="col" className="px-4 font-normal py-3 text-center">{(admin.isActive &&
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="2 2 20 20"
-                                    fill="none"
-                                    stroke="green"
-                                    strokeWidth={2}
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    className="w-5 h-5 inline-block align-middle"
-                                >
-                                    <path d="M5 13l4 4L19 7" />
-                                </svg>
-                            ) ||
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="2 2 20 20"
-                                    fill="none"
-                                    stroke="red"
-                                    strokeWidth={2}
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    className="w-5 h-5 inline-block align-middle"
-                                >
-                                    <path d="M6 6l12 12M6 18L18 6" />
-                                </svg>
-
-                            }</th>
+                            <th scope="col" className="px-4 font-normal py-3">
+                                {admin.birthDate
+                                    ? new Date(admin.birthDate).toLocaleDateString("en-GB", {
+                                        day: "2-digit",
+                                        month: "2-digit",
+                                        year: "numeric",
+                                    })
+                                    : ""}
+                            </th>
+                            <th scope="col" className="px-4 font-normal py-3 text-center" onClick={(e) => e.stopPropagation()}>
+                                <ToggleButtonAdminsTable admin={admin} />
+                            </th>
+                            <th scope="col" className="px-4 font-normal py-3 text-center" onClick={(e) => e.stopPropagation()}>
+                                <DeleteAdminButton adminId={admin.id} onDeleted={() => {
+                                    // Refresh the admins list without page reload
+                                    if (onAdminDeleted) {
+                                        onAdminDeleted();
+                                    }
+                                }} />
+                            </th>
                         </tr>
                     ))}
                 </tbody>
@@ -70,7 +75,7 @@ const AdminsTable = function AdminsTable({ loading, admins }) {
         {
             !loading && !admins.length && (
                 <div className="flex-1 flex items-center justify-center h-64 shadow-md border-gray-600 border sm:rounded-lg text-gray-500 text-lg">
-                    {t("noAdmins")}
+                    {translate("noAdmins")}
                 </div>
             )
         }
