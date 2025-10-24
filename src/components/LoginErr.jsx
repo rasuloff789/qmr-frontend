@@ -1,10 +1,17 @@
 import { t } from "i18next";
 import { memo } from "react";
+import { useDarkMode } from "../contexts/DarkModeContext";
 
 function LoginErr({ onClose, message }) {
+    const { isDarkMode } = useDarkMode();
+    
     return <>
         <div
             className="fixed top-5 right-5 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-sm dark:text-gray-400 dark:bg-gray-800"
+            style={{
+                backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
+                color: isDarkMode ? '#d1d5db' : '#6b7280'
+            }}
             role="alert"
         >
             {/* Error icon */}

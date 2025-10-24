@@ -4,6 +4,7 @@ import { useMutation } from "@apollo/client/react";
 import { useNavigate } from "react-router-dom";
 import LoginErr from "../components/LoginErr.jsx";
 import LogInForm from "../components/LogInForm.jsx";
+import { useDarkMode } from "../contexts/DarkModeContext";
 
 const LOGIN = gql`
   mutation Login($username: String!, $password: String!, $userType: String!) {
@@ -22,6 +23,7 @@ export default function Login() {
     const [errorMessage, setErrorMessage] = useState("");
 
     const navigate = useNavigate();
+    const { isDarkMode } = useDarkMode();
     const [LoginAuth, { loading, error, data }] = useMutation(LOGIN);
 
     // Memoized error handler
@@ -33,6 +35,7 @@ export default function Login() {
     // Optimized form submission with proper error handling
     const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
+        console.log("🚀 Login form submitted");
 
         // Clear previous errors
         setLogErr(false);
@@ -100,7 +103,12 @@ export default function Login() {
 
     return (
         <>
-            <div className="min-h-screen flex items-center justify-center bg-green-200">
+            <div 
+                className="min-h-screen flex items-center justify-center bg-green-200 dark:bg-gray-900"
+                style={{
+                    backgroundColor: isDarkMode ? '#111827' : '#dcfce7'
+                }}
+            >
                 {logErr && (
                     <LoginErr
                         onClose={handleErrorClose}
