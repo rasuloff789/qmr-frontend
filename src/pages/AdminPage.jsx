@@ -221,35 +221,35 @@ export default function AdminPage() {
     const admin = data.getAdmin;
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
             <div className="max-w-4xl mx-auto px-4 py-8">
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-light text-gray-900 mb-2">{translate("adminDetails")}</h1>
-                    <div className="w-16 h-0.5 bg-blue-500"></div>
+                    <h1 className="text-3xl font-light text-gray-900 dark:text-white mb-2">{translate("adminDetails")}</h1>
+                    <div className="w-16 h-0.5 bg-blue-500 dark:bg-blue-400"></div>
                 </div>
 
                 {/* Main Card */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                     {/* Form */}
                     <form id="admin-edit-form" className="p-8" onSubmit={handleSave}>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             {/* ID Field */}
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-600 uppercase tracking-wide">
+                                <label className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
                                     {translate("id")}
                                 </label>
                                 <input
                                     type="text"
                                     value={admin.id}
                                     disabled
-                                    className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl text-gray-500 font-mono text-sm"
+                                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border-0 rounded-xl text-gray-500 dark:text-gray-400 font-mono text-sm"
                                 />
                             </div>
 
                             {/* Fullname Field */}
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-600 uppercase tracking-wide">
+                                <label className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
                                     {translate("fullname")}
                                 </label>
                                 <input
@@ -258,10 +258,10 @@ export default function AdminPage() {
                                     defaultValue={admin.fullname}
                                     readOnly={!isEditing}
                                     className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-200 ${!isEditing
-                                        ? 'bg-gray-50 text-gray-500 border-gray-100'
+                                        ? 'bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-gray-600'
                                         : validationErrors.fullname
-                                            ? 'bg-white text-gray-900 border-red-400 focus:border-red-400 focus:ring-4 focus:ring-red-100'
-                                            : 'bg-white text-gray-900 border-blue-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-100'
+                                            ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-red-400 focus:border-red-400 focus:ring-4 focus:ring-red-100 dark:focus:ring-red-900/30'
+                                            : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-blue-200 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30'
                                         }`}
                                 />
                                 {validationErrors.fullname && (
@@ -271,7 +271,7 @@ export default function AdminPage() {
 
                             {/* Username Field */}
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-600 uppercase tracking-wide">
+                                <label className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
                                     {translate("username")}
                                 </label>
                                 <input
@@ -280,10 +280,10 @@ export default function AdminPage() {
                                     defaultValue={admin.username}
                                     readOnly={!isEditing}
                                     className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-200 ${!isEditing
-                                        ? 'bg-gray-50 text-gray-500 border-gray-100'
+                                        ? 'bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-gray-600'
                                         : validationErrors.username
-                                            ? 'bg-white text-gray-900 border-red-400 focus:border-red-400 focus:ring-4 focus:ring-red-100'
-                                            : 'bg-white text-gray-900 border-blue-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-100'
+                                            ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-red-400 focus:border-red-400 focus:ring-4 focus:ring-red-100 dark:focus:ring-red-900/30'
+                                            : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-blue-200 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30'
                                         }`}
                                 />
                                 {validationErrors.username && (
@@ -293,7 +293,7 @@ export default function AdminPage() {
 
                             {/* Phone Field */}
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-600 uppercase tracking-wide">
+                                <label className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
                                     {translate("phoneNumber")}
                                 </label>
                                 <div className="flex space-x-2">
@@ -303,8 +303,8 @@ export default function AdminPage() {
                                         disabled={!isEditing}
                                         defaultValue={admin.phone?.startsWith('998') ? '998' : admin.phone?.startsWith('90') ? '90' : '998'}
                                         className={`px-4 py-3 rounded-xl border-2 transition-all duration-200 ${!isEditing
-                                            ? 'bg-gray-50 text-gray-500 border-gray-100'
-                                            : 'bg-white text-gray-900 border-blue-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-100'
+                                            ? 'bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-gray-600'
+                                            : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-blue-200 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30'
                                             }`}
                                         style={{ width: '120px' }}
                                     >
@@ -361,10 +361,10 @@ export default function AdminPage() {
                                             }
                                         }}
                                         className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all duration-200 ${!isEditing
-                                            ? 'bg-gray-50 text-gray-500 border-gray-100'
+                                            ? 'bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-gray-600'
                                             : validationErrors.phoneNumber
-                                                ? 'bg-white text-gray-900 border-red-400 focus:border-red-400 focus:ring-4 focus:ring-red-100'
-                                                : 'bg-white text-gray-900 border-blue-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-100'
+                                                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-red-400 focus:border-red-400 focus:ring-4 focus:ring-red-100 dark:focus:ring-red-900/30'
+                                                : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-blue-200 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30'
                                             }`}
                                     />
                                 </div>
@@ -375,7 +375,7 @@ export default function AdminPage() {
 
                             {/* Telegram Username Field */}
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-600 uppercase tracking-wide">
+                                <label className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
                                     {translate("tgUsername")}
                                 </label>
                                 <input
@@ -384,10 +384,10 @@ export default function AdminPage() {
                                     defaultValue={admin.tgUsername}
                                     readOnly={!isEditing}
                                     className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-200 ${!isEditing
-                                        ? 'bg-gray-50 text-gray-500 border-gray-100'
+                                        ? 'bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-gray-600'
                                         : validationErrors.tgUsername
-                                            ? 'bg-white text-gray-900 border-red-400 focus:border-red-400 focus:ring-4 focus:ring-red-100'
-                                            : 'bg-white text-gray-900 border-blue-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-100'
+                                            ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-red-400 focus:border-red-400 focus:ring-4 focus:ring-red-100 dark:focus:ring-red-900/30'
+                                            : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-blue-200 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30'
                                         }`}
                                 />
                                 {validationErrors.tgUsername && (
@@ -397,7 +397,7 @@ export default function AdminPage() {
 
                             {/* Birth Date Field */}
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-600 uppercase tracking-wide">
+                                <label className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
                                     {translate("birthDate")}
                                 </label>
                                 <input
@@ -406,10 +406,10 @@ export default function AdminPage() {
                                     defaultValue={admin.birthDate ? admin.birthDate.split('T')[0] : ''}
                                     readOnly={!isEditing}
                                     className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-200 ${!isEditing
-                                        ? 'bg-gray-50 text-gray-500 border-gray-100'
+                                        ? 'bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-gray-600'
                                         : validationErrors.birthDate
-                                            ? 'bg-white text-gray-900 border-red-400 focus:border-red-400 focus:ring-4 focus:ring-red-100'
-                                            : 'bg-white text-gray-900 border-blue-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-100'
+                                            ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-red-400 focus:border-red-400 focus:ring-4 focus:ring-red-100 dark:focus:ring-red-900/30'
+                                            : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-blue-200 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/30'
                                         }`}
                                 />
                                 {validationErrors.birthDate && (
@@ -419,11 +419,11 @@ export default function AdminPage() {
 
                             {/* Status Field */}
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-600 uppercase tracking-wide">
+                                <label className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
                                     {translate("status")}
                                 </label>
                                 <div className="flex items-center space-x-3">
-                                    <span className={`text-sm font-medium ${!isEditing ? 'text-gray-500' : 'text-gray-700'}`}>
+                                    <span className={`text-sm font-medium ${!isEditing ? 'text-gray-500 dark:text-gray-400' : 'text-gray-700 dark:text-gray-300'}`}>
                                         {translate("inactive")}
                                     </span>
                                     <div className="relative">
@@ -452,7 +452,7 @@ export default function AdminPage() {
                                                 }`}></div>
                                         </label>
                                     </div>
-                                    <span className={`text-sm font-medium ${!isEditing ? 'text-gray-500' : 'text-gray-700'}`}>
+                                    <span className={`text-sm font-medium ${!isEditing ? 'text-gray-500 dark:text-gray-400' : 'text-gray-700 dark:text-gray-300'}`}>
                                         {translate("active")}
                                     </span>
                                 </div>
@@ -462,12 +462,12 @@ export default function AdminPage() {
 
                     {/* Error Display */}
                     {mutationError && (
-                        <div className="px-8 py-4 bg-red-50 border-t border-red-200">
+                        <div className="px-8 py-4 bg-red-50 dark:bg-red-900/20 border-t border-red-200 dark:border-red-800">
                             <div className="flex items-center">
-                                <svg className="w-5 h-5 text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-5 h-5 text-red-400 dark:text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                <span className="text-red-700 text-sm">
+                                <span className="text-red-700 dark:text-red-400 text-sm">
                                     {translate("error")}: {mutationError.message}
                                 </span>
                             </div>
@@ -475,7 +475,7 @@ export default function AdminPage() {
                     )}
 
                     {/* Action Buttons */}
-                    <div className="px-8 py-6 bg-gray-50 border-t border-gray-100">
+                    <div className="px-8 py-6 bg-gray-50 dark:bg-gray-700 border-t border-gray-100 dark:border-gray-600">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-3">
                                 {!isEditing ? (
@@ -517,7 +517,7 @@ export default function AdminPage() {
                             {/* Status Indicator */}
                             <div className="flex items-center">
                                 <div className={`w-3 h-3 rounded-full mr-2 ${admin.isActive ? 'bg-green-400' : 'bg-red-400'}`}></div>
-                                <span className="text-sm text-gray-600">
+                                <span className="text-sm text-gray-600 dark:text-gray-400">
                                     {admin.isActive ? translate("active") : translate("inactive")}
                                 </span>
                             </div>
