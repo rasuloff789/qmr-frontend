@@ -1,10 +1,10 @@
 import { t } from "i18next";
-import { useState } from "react";
+import { useState, useReducer, useCallback, useMemo } from "react";
 import PhoneNumberInput from "./PhoneNumberInput.jsx";
 import AdminInputs from "./AdminInputs.AddAdminModal.jsx";
 import AddAdminFormHeader from "./FormHeader.AddAdminModal.jsx";
 import DateTimeInput from "./DateTimeInput.AddAdminModal.jsx";
-import { validateAdminInputs } from "../utils/validators.js"; // ✅ validator import
+import { validateAdminInputs } from "../utils/validators.js";
 import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 
@@ -33,65 +33,136 @@ const ADD_ADMIN = gql`
   }
 `;
 
+// Form state reducer for better state management
+const formReducer = (state, action) => {
+    switch (action.type) {
+        case 'SET_FIELD':
+            return { ...state, [action.field]: action.value };
+        case 'SET_ERRORS':
+            return { ...state, errors: action.errors };
+        case 'CLEAR_FORM':
+            return {
+                username: "",
+                fullname: "",
+                password: "",
+                tgUsername: "",
+                countryCode: "90",
+                phoneNumber: "",
+                birthDate: null,
+                errors: {}
+            };
+        case 'SET_MODAL':
+            return { ...state, open: action.open };
+        default:
+            return state;
+    }
+};
+
+// Initial form state
+const initialFormState = {
+    open: false,
+    username: "",
+    fullname: "",
+    password: "",
+    tgUsername: "",
+    countryCode: "90",
+    phoneNumber: "",
+    birthDate: null,
+    errors: {}
+};
+
 export default function AddAdmin() {
-    const [open, setOpen] = useState(false);
-    const [username, setUsername] = useState("");
-    const [fullname, setFullname] = useState("");
-    const [password, setPassword] = useState("");
-    const [tgUsername, setTgUsername] = useState("");
-    const [countryCode, setCountryCode] = useState("90");
-    const [phoneNumber, setPhoneNumber] = useState("");
-    const [birthDate, setBirthDate] = useState(null);
-    const [errors, setErrors] = useState({});
+    const [formState, dispatch] = useReducer(formReducer, initialFormState);
 
     // Mutation
     const [addAdminMutation, { loading, error }] = useMutation(ADD_ADMIN);
 
-    const handleSubmit = async (e) => {
+    // Memoized field setters for performance
+    const setField = useCallback((field, value) => {
+        dispatch({ type: 'SET_FIELD', field, value });
+    }, []);
+
+    const setModal = useCallback((open) => {
+        dispatch({ type: 'SET_MODAL', open });
+    }, []);
+
+    // Optimized form submission with proper error handling
+    const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
 
-        // ✅ tashqi validatorni chaqiramiz
+        // Validate form inputs
         const newErrors = validateAdminInputs({
-            fullname,
-            username,
-            password,
-            tgUsername,
-            phoneNumber,
+            fullname: formState.fullname,
+            username: formState.username,
+            password: formState.password,
+            tgUsername: formState.tgUsername,
+            phoneNumber: formState.phoneNumber,
         });
 
-        setErrors(newErrors);
+        dispatch({ type: 'SET_ERRORS', errors: newErrors });
 
+        // Return early if validation fails
         if (Object.keys(newErrors).length > 0) {
             return;
         }
 
-        if (Object.keys(errors).length === 0) {
-            try {
-                const { data, error } = await addAdminMutation({
-                    variables: {
-                        username,
-                        password,
-                        fullname,
-                        tgUsername,
-                        birthDate: birthDate.toISOString().split("T")[0], // YYYY-MM-DD format
-                        phone: `${countryCode}${phoneNumber}`, // Phone type Phone! bo'lishi kerak
-                    },
-                });
+        try {
+            await addAdminMutation({
+                variables: {
+                    username: formState.username,
+                    password: formState.password,
+                    fullname: formState.fullname,
+                    tgUsername: formState.tgUsername,
+                    birthDate: formState.birthDate?.toISOString().split("T")[0], // YYYY-MM-DD format
+                    phone: `${formState.countryCode}${formState.phoneNumber}`,
+                },
+            });
 
-                setOpen(false); // modalni yopish
-            } catch (err) {
-                console.log("Admin added:", err);
-                console.error("Add admin error:", err.message);
-            }
+            // Clear form and close modal on success
+            dispatch({ type: 'CLEAR_FORM' });
+            dispatch({ type: 'SET_MODAL', open: false });
+        } catch (err) {
+            console.error("Add admin error:", err.message);
+            // Handle error state if needed
         }
+    }, [formState, addAdminMutation]);
 
+    // Memoized components for performance
+    const memoizedAdminInputs = useMemo(() => (
+        <AdminInputs
+            username={formState.username}
+            password={formState.password}
+            fullname={formState.fullname}
+            tgUsername={formState.tgUsername}
+            setFullname={(value) => setField('fullname', value)}
+            setPassword={(value) => setField('password', value)}
+            setTgUsername={(value) => setField('tgUsername', value)}
+            setUsername={(value) => setField('username', value)}
+            errors={formState.errors}
+        />
+    ), [formState.username, formState.password, formState.fullname, formState.tgUsername, formState.errors, setField]);
 
-    };
+    const memoizedPhoneInput = useMemo(() => (
+        <PhoneNumberInput
+            countryCode={formState.countryCode}
+            setCountryCode={(value) => setField('countryCode', value)}
+            phoneNumber={formState.phoneNumber}
+            setPhoneNumber={(value) => setField('phoneNumber', value)}
+            errors={formState.errors}
+        />
+    ), [formState.countryCode, formState.phoneNumber, formState.errors, setField]);
+
+    const memoizedDateTimeInput = useMemo(() => (
+        <DateTimeInput
+            birthDate={formState.birthDate}
+            setBirthDate={(value) => setField('birthDate', value)}
+        />
+    ), [formState.birthDate, setField]);
 
     return (
         <>
             <button
-                onClick={() => setOpen(true)}
+                onClick={() => setModal(true)}
                 className="flex items-center gap-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
@@ -100,37 +171,22 @@ export default function AddAdmin() {
                 <span>{t("addAdmin")}</span>
             </button>
 
-            {open && (
+            {formState.open && (
                 <div className="overflow-y-auto fixed inset-0 z-50 flex justify-center items-center bg-black/50">
                     <div className="relative p-4 w-full max-w-md">
                         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                            <AddAdminFormHeader setOpen={setOpen} />
+                            <AddAdminFormHeader setOpen={(open) => setModal(open)} />
                             <form className="p-4 md:p-5" onSubmit={handleSubmit}>
                                 <div className="grid gap-4 mb-4 grid-cols-2">
-                                    <AdminInputs
-                                        username={username}
-                                        password={password}
-                                        fullname={fullname}
-                                        tgUsername={tgUsername}
-                                        setFullname={setFullname}
-                                        setPassword={setPassword}
-                                        setTgUsername={setTgUsername}
-                                        setUsername={setUsername}
-                                        errors={errors}
-                                    />
-                                    <PhoneNumberInput
-                                        countryCode={countryCode}
-                                        setCountryCode={setCountryCode}
-                                        phoneNumber={phoneNumber}
-                                        setPhoneNumber={setPhoneNumber}
-                                        errors={errors}
-                                    />
-                                    <DateTimeInput birthDate={birthDate} setBirthDate={setBirthDate} />
+                                    {memoizedAdminInputs}
+                                    {memoizedPhoneInput}
+                                    {memoizedDateTimeInput}
                                 </div>
 
                                 <button
                                     type="submit"
-                                    className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5"
+                                    disabled={loading}
+                                    className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <svg className="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path
@@ -139,8 +195,14 @@ export default function AddAdmin() {
                                             clipRule="evenodd"
                                         />
                                     </svg>
-                                    {t("addAdmin")}
+                                    {loading ? t("adding") : t("addAdmin")}
                                 </button>
+
+                                {error && (
+                                    <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                                        {error.message}
+                                    </div>
+                                )}
                             </form>
                         </div>
                     </div>

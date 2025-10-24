@@ -1,9 +1,9 @@
 import { t } from "i18next";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { memo } from "react";
 
-
-export default function DateTimeInput({ birthDate, setBirthDate }) {
+function DateTimeInput({ birthDate, setBirthDate }) {
 
     return (
         <div className="col-span-2">
@@ -47,3 +47,6 @@ export default function DateTimeInput({ birthDate, setBirthDate }) {
         </div>
     );
 }
+
+// Memoized component for performance optimization
+export default memo(DateTimeInput);

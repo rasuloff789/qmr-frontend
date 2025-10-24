@@ -1,6 +1,7 @@
 import { t } from "i18next";
+import { memo } from "react";
 
-export default function AdminInputs({
+function AdminInputs({
     username,
     setUsername,
     password,
@@ -9,7 +10,7 @@ export default function AdminInputs({
     setFullname,
     tgUsername,
     setTgUsername,
-    errors = {}, // ⚠️ qo‘shildi
+    errors = {},
 }) {
     return (
         <>
@@ -91,3 +92,6 @@ export default function AdminInputs({
         </>
     );
 }
+
+// Memoized component for performance optimization
+export default memo(AdminInputs);

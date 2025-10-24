@@ -1,27 +1,27 @@
 import { t } from "i18next";
-import React from "react";
+import React, { memo, useMemo } from "react";
 
-export default function PhoneNumberInput({
+function PhoneNumberInput({
     countryCode,
     setCountryCode,
     phoneNumber,
     setPhoneNumber,
-    errors, // <-- yangi prop
+    errors,
 }) {
-    // 🇺🇿 +998 uchun placeholder va 🇹🇷 +90 uchun boshqa placeholder
-    const getPlaceholder = () => {
+    // Memoized placeholder calculation
+    const placeholder = useMemo(() => {
         if (countryCode === "998") return "90 123 45 67"; // O'zbek raqam format
         if (countryCode === "90") return "501 234 56 78"; // Turkiya raqam format
         return "Phone number";
-    };
+    }, [countryCode]);
 
-    // error bor-yo‘qligiga qarab input border rangi o‘zgaradi
-    const inputClass = `
-    bg-gray-50 border text-gray-900 text-sm rounded-e-lg block w-full p-2.5
-    ${errors?.phoneNumber
+    // Memoized input class calculation
+    const inputClass = useMemo(() => `
+        bg-gray-50 border text-gray-900 text-sm rounded-e-lg block w-full p-2.5
+        ${errors?.phoneNumber
             ? "border-red-500 focus:ring-red-500 focus:border-red-500"
             : "border-gray-300 focus:ring-primary-600 focus:border-primary-600"}
-  `;
+    `, [errors?.phoneNumber]);
 
     return (
         <div className="col-span-2">
@@ -49,7 +49,7 @@ export default function PhoneNumberInput({
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     className={inputClass}
-                    placeholder={getPlaceholder()}
+                    placeholder={placeholder}
                     required
                 />
             </div>
@@ -61,3 +61,6 @@ export default function PhoneNumberInput({
         </div>
     );
 }
+
+// Memoized component for performance optimization
+export default memo(PhoneNumberInput);
