@@ -38,6 +38,77 @@ i18n.use(initReactI18next).init({
 				chooseBDate: "Choose birthdate",
 				menuAddAdmin: "Adding admin menu",
 				addAdmin: "Add admin",
+				errorOccured: "Error occurred",
+				deactivate: "Deactivate",
+				activate: "Activate",
+				active: "Active",
+				inactive: "Inactive",
+				deleteAdminConfirmation: "Are you sure you want to delete this admin?",
+				delete: "Delete",
+				fullnameError: "Fullname must be 3–50 characters long",
+				usernameError:
+					"Username must be 4–10 characters long, only letters, numbers or underscore",
+				passwordError:
+					"Password must be 8–20 characters long, at least 1 uppercase letter, lowercase letter and number",
+				tgUsernameError: "Telegram username must be 5–32 characters long",
+				phoneNumberError: "Phone number must be 9–10 digits long",
+				birthDateError: "Birthdate is required",
+				chooseBDateError: "Choose birthdate",
+				menuAddAdminError: "Adding admin menu",
+				addAdminError: "Add admin",
+				errorOccuredError: "Error occurred",
+				deactivateError: "Deactivate",
+				activateError: "Activate",
+				activeError: "Active",
+				inactiveError: "Inactive",
+				deleteAdminConfirmationError:
+					"Are you sure you want to delete this admin?",
+				deleteError: "Delete",
+				phoneNumberError: "Phone number must be 9–10 digits long",
+				// Coming Soon Page
+				comingSoon: "Coming Soon!",
+				workingOnIt: "We're working hard to bring you this feature!",
+				page: "Page",
+				// Layout
+				"Back to Admins": "Back to Admins",
+				"Admin Details": "Admin Details",
+				"Qomar Qur'on Markazi": "Qomar Qur'on Markazi",
+				// Add Admin
+				adding: "Adding...",
+				// Language options
+				"🇺🇿 O'zbekcha": "🇺🇿 O'zbekcha",
+				"🇬🇧 English": "🇬🇧 English",
+				// Home page
+				welcomeToDashboard: "Welcome to the Qomar Qur'on Markazi dashboard.",
+				// Admin page
+				adminDetails: "Admin Details",
+				id: "ID",
+				status: "Status",
+				editAdmin: "Edit Admin",
+				backToAdmins: "Back to Admins",
+				adminNotFound: "Admin not found",
+				error: "Error",
+				// Admins Table
+				telegram: "Telegram",
+				actions: "Actions",
+				addAdmin: "Add Admin",
+				// Edit Admin
+				cancel: "Cancel",
+				saveChanges: "Save Changes",
+				saving: "Saving...",
+				// Validation Errors
+				fullnameError:
+					"Full name must be 3-50 characters and contain only letters",
+				usernameError:
+					"Username must be 4-10 characters, lowercase letters and numbers only",
+				passwordError:
+					"Password must be at least 8 characters with uppercase, lowercase, and number",
+				tgUsernameError:
+					"Telegram username must be 5-32 characters, letters, numbers and underscores only",
+				phoneNumberError: "Phone number must be 9-10 digits",
+				status: "Status",
+				active: "Active",
+				inactive: "Inactive",
 			},
 		},
 		uz: {
@@ -76,6 +147,71 @@ i18n.use(initReactI18next).init({
 				chooseBDate: "Tug'ilgan sanani tanlang",
 				menuAddAdmin: "Adminstrator qo'shish menyusi",
 				addAdmin: "Admin qo'shish",
+				errorOccured: "Xatolik yuz berdi",
+				deactivate: "Faol emas",
+				activate: "Faol",
+				active: "Faol",
+				inactive: "Faol emas",
+				deleteAdminConfirmation: "Adminni o'chirishni xohlaysizmi?",
+				delete: "O'chirish",
+				fullnameError: "Ism 3–50 ta harfdan iborat bo‘lishi kerak.",
+				usernameError:
+					"Foydalanuvchi nomi 4–10 ta belgi, faqat harf, raqam yoki pastki chiziq bo‘lishi kerak.",
+				passwordError:
+					"Parol 8–20 ta belgidan iborat bo‘lishi kerak, kamida 1 ta katta harf, kichik harf va raqam bo‘lishi kerak.",
+				tgUsernameError:
+					"Telegram foydalanuvchi nomi 5–32 belgidan iborat bo‘lishi kerak.",
+				phoneNumberError: "Telefon raqam 9–10 raqamdan iborat bo‘lishi kerak.",
+				birthDateError: "Tug'ilgan sana talab etiladi",
+				chooseBDateError: "Tug'ilgan sanani tanlang",
+				menuAddAdminError: "Adminstrator qo'shish menyusi",
+				addAdminError: "Admin qo'shish",
+				// Coming Soon Page
+				comingSoon: "Tez orada!",
+				workingOnIt:
+					"Bu funksiyani sizga taqdim etish uchun qattiq ishlayapmiz!",
+				page: "Sahifa",
+				// Layout
+				"Back to Admins": "Adminstratorlarga qaytish",
+				"Admin Details": "Adminstrator tafsilotlari",
+				"Qomar Qur'on Markazi": "Qomar Qur'on Markazi",
+				// Add Admin
+				adding: "Qo'shilmoqda...",
+				// Language options
+				"🇺🇿 O'zbekcha": "🇺🇿 O'zbekcha",
+				"🇬🇧 English": "🇬🇧 English",
+				// Home page
+				welcomeToDashboard:
+					"Qomar Qur'on Markazi boshqaruv paneliga xush kelibsiz.",
+				// Admin page
+				adminDetails: "Adminstrator tafsilotlari",
+				id: "ID",
+				status: "Holat",
+				editAdmin: "Adminstratorni tahrirlash",
+				backToAdmins: "Adminstratorlarga qaytish",
+				adminNotFound: "Adminstrator topilmadi",
+				error: "Xatolik",
+				// Admins Table
+				telegram: "Telegram",
+				actions: "Amallar",
+				addAdmin: "Admin qo'shish",
+				// Edit Admin
+				cancel: "Bekor qilish",
+				saveChanges: "O'zgarishlarni saqlash",
+				saving: "Saqlanmoqda...",
+				// Validation Errors
+				fullnameError:
+					"To'liq ism 3-50 belgi bo'lishi va faqat harflardan iborat bo'lishi kerak",
+				usernameError:
+					"Foydalanuvchi nomi 4-10 belgi bo'lishi va faqat kichik harflar va raqamlardan iborat bo'lishi kerak",
+				passwordError:
+					"Parol kamida 8 belgi bo'lishi va katta harf, kichik harf va raqam bo'lishi kerak",
+				tgUsernameError:
+					"Telegram foydalanuvchi nomi 5-32 belgi bo'lishi va harflar, raqamlar va pastki chiziqlardan iborat bo'lishi kerak",
+				phoneNumberError: "Telefon raqami 9-10 raqamdan iborat bo'lishi kerak",
+				status: "Holat",
+				active: "Faol",
+				inactive: "Faol emas",
 			},
 		},
 	},
