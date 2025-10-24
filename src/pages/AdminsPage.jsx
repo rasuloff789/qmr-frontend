@@ -55,10 +55,10 @@ export default function () {
         <>
             <div className="flex justify-between items-center">
                 <SearchAdminInput search={search} AdminSearch={AdminSearch} />
-                <AddAdmin />
+                <AddAdmin onAdminAdded={refetch} />
             </div>
 
-            <AdminsTable loading={loading} admins={admins} />
+            <AdminsTable loading={loading} admins={admins} onAdminDeleted={refetch} />
         </>
     )
 }
