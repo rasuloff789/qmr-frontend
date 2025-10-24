@@ -1,7 +1,17 @@
 import { t } from "i18next";
+import { memo, useCallback } from "react";
 
-export default function ({ handleSubmit, username, setUsername, password, setPassword, loading }) {
-    return <>
+function LogInForm({ handleSubmit, username, setUsername, password, setPassword, loading }) {
+    // Memoized change handlers for performance
+    const handleUsernameChange = useCallback((e) => {
+        setUsername(e.target.value);
+    }, [setUsername]);
+
+    const handlePasswordChange = useCallback((e) => {
+        setPassword(e.target.value);
+    }, [setPassword]);
+
+    return (
         <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
             <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">{t("login")}</h2>
             <form className="space-y-4" onSubmit={handleSubmit}>
@@ -15,9 +25,10 @@ export default function ({ handleSubmit, username, setUsername, password, setPas
                         value={username}
                         id="username"
                         placeholder={t("inputUsername")}
-                        onChange={(e) => setUsername(e.target.value)}
+                        onChange={handleUsernameChange}
                         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                         required
+                        disabled={loading}
                     />
                 </div>
 
@@ -31,9 +42,10 @@ export default function ({ handleSubmit, username, setUsername, password, setPas
                         id="password"
                         value={password}
                         placeholder={t("inputPassword")}
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={handlePasswordChange}
                         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                         required
+                        disabled={loading}
                     />
                 </div>
 
@@ -41,10 +53,14 @@ export default function ({ handleSubmit, username, setUsername, password, setPas
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-blue-500 text-black py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                    className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                     {loading ? t("loading") : t("login")}
                 </button>
             </form>
         </div>
-    </>
+    );
 }
+
+// Memoized component for performance optimization
+export default memo(LogInForm);
