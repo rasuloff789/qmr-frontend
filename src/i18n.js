@@ -1,6 +1,9 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
+// Get saved language from localStorage or default to 'uz'
+const savedLanguage = localStorage.getItem("app-language") || "uz";
+
 i18n.use(initReactI18next).init({
 	resources: {
 		en: {
@@ -109,6 +112,18 @@ i18n.use(initReactI18next).init({
 				status: "Status",
 				active: "Active",
 				inactive: "Inactive",
+				addNewAdminDescription: "Add a new administrator to the system",
+				closeModal: "Close modal",
+				selectedDate: "Selected date",
+				noAdminsFound: "No administrators found",
+				noAdminsDescription:
+					"Get started by adding your first administrator to the system",
+				noResultsFound: "No results found",
+				noResultsDescription:
+					"Try adjusting your search terms or clear the search to see all administrators",
+				clearSearch: "Clear search",
+				loading: "Loading...",
+				tryAgain: "Try again",
 			},
 		},
 		uz: {
@@ -212,12 +227,29 @@ i18n.use(initReactI18next).init({
 				status: "Holat",
 				active: "Faol",
 				inactive: "Faol emas",
+				addNewAdminDescription: "Tizimga yangi administrator qo'shish",
+				closeModal: "Modalni yopish",
+				selectedDate: "Tanlangan sana",
+				noAdminsFound: "Administratorlar topilmadi",
+				noAdminsDescription:
+					"Tizimga birinchi administratoringizni qo'shish orqali boshlang",
+				noResultsFound: "Natijalar topilmadi",
+				noResultsDescription:
+					"Qidiruv so'zlarini o'zgartiring yoki barcha administratorlarni ko'rish uchun qidiruvni tozalang",
+				clearSearch: "Qidiruvni tozalash",
+				loading: "Yuklanmoqda...",
+				tryAgain: "Qayta urinish",
 			},
 		},
 	},
-	lng: "uz", // default language
+	lng: savedLanguage, // use saved language
 	fallbackLng: "en", // agar tanlangan til yo'q bo'lsa
 	interpolation: { escapeValue: false }, // React bilan moslash uchun
+});
+
+// Listen for language changes and save to localStorage
+i18n.on("languageChanged", (lng) => {
+	localStorage.setItem("app-language", lng);
 });
 
 export default i18n;
