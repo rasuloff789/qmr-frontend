@@ -1,9 +1,10 @@
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { memo } from "react";
 
-function DateTimeInput({ birthDate, setBirthDate }) {
+function DateTimeInput({ birthDate, setBirthDate, error }) {
+    const { t: translate } = useTranslation();
 
     return (
         <div className="col-span-2">
@@ -11,7 +12,7 @@ function DateTimeInput({ birthDate, setBirthDate }) {
                 htmlFor="datetime"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-                {t("birthDate")}
+                {translate("birthDate")}
             </label>
 
             <div className="relative">
@@ -20,11 +21,12 @@ function DateTimeInput({ birthDate, setBirthDate }) {
                     selected={birthDate}
                     onChange={(date) => setBirthDate(date)}
                     dateFormat="dd/MM/yyyy"
-                    placeholderText={t("chooseBDate")}
+                    placeholderText={translate("chooseBDate")}
                     maxDate={new Date()} // bugungi kungacha
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+                    className={`bg-gray-50 border text-gray-900 text-sm rounded-lg
                     focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pl-10
-                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                    dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white ${error ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600'
+                        }`}
                 />
 
                 {/* 📆 Kalendar ikonkasi */}
@@ -44,6 +46,9 @@ function DateTimeInput({ birthDate, setBirthDate }) {
                     />
                 </svg>
             </div>
+            {error && (
+                <p className="text-red-500 text-sm mt-1">{translate(error)}</p>
+            )}
         </div>
     );
 }
