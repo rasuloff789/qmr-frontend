@@ -1,6 +1,7 @@
 import { t } from "i18next";
+import { memo } from "react";
 
-export default function LoginErr({ onClose }) {
+function LoginErr({ onClose, message }) {
     return <>
         <div
             className="fixed top-5 right-5 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-sm dark:text-gray-400 dark:bg-gray-800"
@@ -21,7 +22,9 @@ export default function LoginErr({ onClose }) {
             </div>
 
             {/* Text */}
-            <div className="ml-3 text-sm font-normal">{t("loginErr")}</div>
+            <div className="ml-3 text-sm font-normal">
+                {message || t("loginErr")}
+            </div>
 
             {/* Close button */}
             <button
@@ -42,6 +45,8 @@ export default function LoginErr({ onClose }) {
                 </svg>
             </button>
         </div>
-
     </>
 }
+
+// Memoized component for performance optimization
+export default memo(LoginErr);
