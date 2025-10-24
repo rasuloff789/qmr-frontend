@@ -1,34 +1,37 @@
-import { t } from "i18next"
+import { useTranslation } from "react-i18next";
 import { memo } from "react";
 
 function AddAdminFormHeader({ setOpen, setField }) {
+    const { t: translate } = useTranslation();
+
     return (
-        <>
-            {/* Header */}
-            <div className="flex items-center justify-between px-4 py-2 border-b dark:border-gray-600 border-gray-200">
-                <h3 className="text-base font-medium text-gray-900 dark:text-white">
-                    {t("menuAddAdmin")}
+        <div className="flex items-center justify-between">
+            <div>
+                <h3 className="text-lg font-semibold text-white">
+                    {translate("menuAddAdmin")}
                 </h3>
-                <button
-                    onClick={() => {
-                        setOpen(false);
-                        setField("fullname", "");
-                        setField("username", "");
-                        setField("password", "");
-                        setField("tgUsername", "");
-                        setField("phoneNumber", "");
-                        setField("birthDate", null);
-                        setField("errors", {});
-                        setField("countryCode", "998");
-                    }}
-                    type="button"
-                    className="text-gray-400 bg-transparent rounded w-6 h-6 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 hover:text-gray-900 dark:hover:text-white focus:outline-none"
-                >
-                    <span aria-hidden="true" className="text-lg">&times;</span>
-                    <span className="sr-only">Close modal</span>
-                </button>
             </div>
-        </>
+            <button
+                onClick={() => {
+                    setOpen(false);
+                    setField("fullname", "");
+                    setField("username", "");
+                    setField("password", "");
+                    setField("tgUsername", "");
+                    setField("phoneNumber", "");
+                    setField("birthDate", null);
+                    setField("errors", {});
+                    setField("countryCode", "998");
+                }}
+                type="button"
+                className="text-white/80 hover:text-white hover:bg-white/20 rounded-lg p-1.5 transition-all duration-200 focus:outline-none hover:scale-110 active:scale-95"
+            >
+                <svg className="w-5 h-5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                <span className="sr-only">{translate("closeModal")}</span>
+            </button>
+        </div>
     );
 }
 
