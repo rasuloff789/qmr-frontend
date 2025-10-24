@@ -1,4 +1,4 @@
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 import React, { memo, useMemo } from "react";
 
 function PhoneNumberInput({
@@ -8,6 +8,7 @@ function PhoneNumberInput({
     setPhoneNumber,
     errors,
 }) {
+    const { t: translate } = useTranslation();
     // Memoized placeholder calculation
     const placeholder = useMemo(() => {
         if (countryCode === "998") return "90 123 45 67"; // O'zbek raqam format
@@ -29,7 +30,7 @@ function PhoneNumberInput({
                 htmlFor="phone"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-                {t("phoneNumber")}
+                {translate("phoneNumber")}
             </label>
 
             <div className="flex">
@@ -56,7 +57,7 @@ function PhoneNumberInput({
 
             {/* 🔥 Xato chiqadigan joy */}
             {errors?.phoneNumber && (
-                <p className="mt-1 text-sm text-red-500">{errors.phoneNumber}</p>
+                <p className="mt-1 text-sm text-red-500">{translate("phoneNumberError")}</p>
             )}
         </div>
     );
