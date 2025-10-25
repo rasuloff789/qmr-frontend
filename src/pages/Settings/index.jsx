@@ -26,11 +26,9 @@ const GET_ADMIN_PROFILE = gql`
     me {
       id
       role
-      ... on Admin {
-        phone
-        tgUsername
-        birthDate
-      }
+      phone
+      tgUsername
+      birthDate
     }
   }
 `;
