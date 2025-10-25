@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import LoginErr from "../components/LoginErr.jsx";
 import LogInForm from "../components/LogInForm.jsx";
 import { useDarkMode } from "../contexts/DarkModeContext";
+import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
 
 const LOGIN = gql`
   mutation Login($username: String!, $password: String!, $userType: String!) {
@@ -16,6 +17,15 @@ const LOGIN = gql`
   }
 `;
 
+// Create a separate Apollo Client for login without authentication
+const loginClient = new ApolloClient({
+  link: new HttpLink({
+    uri: "http://localhost:4000/graphql",
+    credentials: "include",
+  }),
+  cache: new InMemoryCache(),
+});
+
 export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -24,7 +34,9 @@ export default function Login() {
 
     const navigate = useNavigate();
     const { isDarkMode } = useDarkMode();
-    const [LoginAuth, { loading, error, data }] = useMutation(LOGIN);
+    const [LoginAuth, { loading, error, data }] = useMutation(LOGIN, {
+        client: loginClient
+    });
 
     // Memoized error handler
     const handleErrorClose = useCallback(() => {
@@ -64,13 +76,37 @@ export default function Login() {
 
             console.log("Sending login request with variables:", variables);
 
-            const res = await LoginAuth({
-                variables,
+            // Use direct fetch instead of Apollo Client to bypass authentication issues
+            const response = await fetch('http://localhost:4000/graphql', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: `
+                        mutation Login($username: String!, $password: String!, $userType: String!) {
+                            login(username: $username, password: $password, userType: $userType) {
+                                token
+                                message
+                                success
+                            }
+                        }
+                    `,
+                    variables
+                })
             });
 
-            console.log("Login response:", res);
+            const result = await response.json();
+            console.log("Login response:", result);
 
-            const loginData = res.data?.login;
+            if (result.errors) {
+                console.error("GraphQL errors:", result.errors);
+                setErrorMessage(result.errors[0]?.message || "Login failed");
+                setLogErr(true);
+                return;
+            }
+
+            const loginData = result.data?.login;
             if (loginData?.success && loginData?.token) {
                 localStorage.setItem("authentification", `Bearer ${loginData.token}`);
                 navigate("/");
@@ -103,7 +139,7 @@ export default function Login() {
 
     return (
         <>
-            <div 
+            <div
                 className="min-h-screen flex items-center justify-center bg-green-200 dark:bg-gray-900"
                 style={{
                     backgroundColor: isDarkMode ? '#111827' : '#dcfce7'
