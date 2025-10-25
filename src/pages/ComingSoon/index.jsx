@@ -1,13 +1,29 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDarkMode } from '../../contexts/DarkModeContext';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function ComingSoonPage({ title, titleKey }) {
     const { t: translate } = useTranslation();
     const { isDarkMode } = useDarkMode();
+    const navigate = useNavigate();
+    const location = useLocation();
 
     // Use titleKey for translation, fallback to title prop
     const pageTitle = titleKey ? translate(titleKey) : title;
+    
+    // Check if this is the settings page
+    const isSettingsPage = location.pathname === '/settings';
+    
+    // Handle logout
+    const handleLogout = () => {
+        // Clear authentication
+        localStorage.removeItem("authentification");
+        localStorage.removeItem("userRole");
+        
+        // Navigate to login
+        navigate("/login");
+    };
 
     return (
         <div
@@ -57,6 +73,24 @@ export default function ComingSoonPage({ title, titleKey }) {
                         <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
                         <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
                     </div>
+                    
+                    {/* Exit/Logout Button - Only show on settings page */}
+                    {isSettingsPage && (
+                        <div className="mt-6">
+                            <button
+                                onClick={handleLogout}
+                                className="flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200"
+                                style={{
+                                    backgroundColor: isDarkMode ? '#dc2626' : '#dc2626'
+                                }}
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                <span>{translate("logout") || "Exit"}</span>
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
