@@ -132,25 +132,26 @@ export default function Settings() {
     // Update profile mutation (for admins and teachers)
     const [updateProfile, { loading: profileLoading }] = useMutation(UPDATE_PROFILE, {
         onCompleted: (data) => {
+            console.log("🔄 Profile update completed:", data);
             if (data?.updateProfile?.success) {
                 setProfileSuccess(translate("profileUpdatedSuccess") || "Profile updated successfully!");
                 setIsEditingProfile(false);
-                // Refetch user data to update the UI silently without page reload
-                refetch().then(() => {
-                    // Update local state with new values after refetch
-                    const updatedUser = data?.updateProfile?.user;
-                    if (updatedUser) {
-                        const newPhone = updatedUser.phone || "";
-                        if (newPhone.startsWith("998")) {
-                            setCountryCode("998");
-                            setPhoneNumber(newPhone.substring(3));
-                        } else if (newPhone.startsWith("90")) {
-                            setCountryCode("90");
-                            setPhoneNumber(newPhone.substring(2));
-                        }
-                        setTgUsername(updatedUser.tgUsername || "");
+                // Update local state with new values from response
+                const updatedUser = data?.updateProfile?.user;
+                if (updatedUser) {
+                    console.log("📱 Updating local state with:", updatedUser);
+                    const newPhone = updatedUser.phone || "";
+                    if (newPhone.startsWith("998")) {
+                        setCountryCode("998");
+                        setPhoneNumber(newPhone.substring(3));
+                    } else if (newPhone.startsWith("90")) {
+                        setCountryCode("90");
+                        setPhoneNumber(newPhone.substring(2));
                     }
-                });
+                    setTgUsername(updatedUser.tgUsername || "");
+                }
+                // DON'T call refetch - it's causing reload
+                // refetch();
                 setTimeout(() => setProfileSuccess(""), 3000);
             } else {
                 const errors = data?.updateProfile?.errors || [];
@@ -161,7 +162,8 @@ export default function Settings() {
         onError: (error) => {
             console.error("Update profile error:", error);
             setProfileValidationErrors({ mutation: error.message || translate("errorOccured") || "An error occurred" });
-        }
+        },
+        refetchQueries: [] // Don't refetch any queries
     });
 
     // Change password mutation
