@@ -20,12 +20,15 @@ const ME_QUERY = gql`
 `;
 
 // Query to get admin profile data (for admins only)
+// Using me query with all fields that should work for admin
 const GET_ADMIN_PROFILE = gql`
-  query GetAdminProfile {
-    getAdminProfile {
-      phone
-      tgUsername
-      birthDate
+  query Me {
+    me {
+      ... on Admin {
+        phone
+        tgUsername
+        birthDate
+      }
     }
   }
 `;
@@ -95,11 +98,14 @@ export default function Settings() {
     });
 
     // Fetch admin profile data if user is admin/teacher
-    const { data: adminData, refetch: refetchAdminProfile } = useQuery(GET_ADMIN_PROFILE, {
+    const { data: adminData, loading: adminLoading, error: adminError, refetch: refetchAdminProfile } = useQuery(GET_ADMIN_PROFILE, {
         skip: !canEditProfile, // Only fetch if user is admin/teacher
         errorPolicy: "all",
         onCompleted: (data) => {
             console.log("📱 Admin Profile Data:", data);
+        },
+        onError: (error) => {
+            console.error("❌ Admin Profile Query Error:", error);
         }
     });
 
@@ -120,7 +126,7 @@ export default function Settings() {
             // Initialize profile fields if editable
             if (canEdit) {
                 // Use admin profile data if available, fallback to ME data
-                const profileData = adminData?.getAdminProfile || {};
+                const profileData = adminData?.me || data?.me || {};
                 console.log("📱 Admin/Teacher data:", profileData);
 
                 setTgUsername(profileData.tgUsername || data.me.tgUsername || "");
@@ -213,9 +219,9 @@ export default function Settings() {
         }
 
         // Check if there are any changes
-        const profileData = adminData?.getAdminProfile || {};
-        const currentPhone = profileData.phone || data?.me?.phone || "";
-        const currentTgUsername = profileData.tgUsername || data?.me?.tgUsername || "";
+        const profileData = adminData?.me || data?.me || {};
+        const currentPhone = profileData.phone || "";
+        const currentTgUsername = profileData.tgUsername || "";
 
         if (phone === currentPhone && tgUsername === currentTgUsername) {
             setProfileValidationErrors({ general: translate("noChanges") || "No changes detected" });
@@ -383,10 +389,12 @@ export default function Settings() {
                             {/* Debug Info */}
                             <div className="mb-4 p-3 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg text-xs">
                                 <p><strong>Debug:</strong> canEditProfile={canEditProfile.toString()}</p>
+                                <p><strong>Admin Query Loading:</strong> {adminLoading ? "Yes" : "No"}</p>
+                                <p><strong>Admin Query Error:</strong> {adminError ? JSON.stringify(adminError) : "None"}</p>
                                 <p><strong>tgUsername (user):</strong> {user.tgUsername || "undefined"}</p>
                                 <p><strong>phone (user):</strong> {user.phone || "undefined"}</p>
-                                <p><strong>tgUsername (admin):</strong> {adminData?.getAdminProfile?.tgUsername || "undefined"}</p>
-                                <p><strong>phone (admin):</strong> {adminData?.getAdminProfile?.phone || "undefined"}</p>
+                                <p><strong>tgUsername (admin):</strong> {adminData?.me?.tgUsername || "undefined"}</p>
+                                <p><strong>phone (admin):</strong> {adminData?.me?.phone || "undefined"}</p>
                                 <p><strong>role:</strong> {user.role || "undefined"}</p>
                             </div>
 
@@ -456,7 +464,7 @@ export default function Settings() {
                                                 setIsEditingProfile(false);
                                                 setProfileValidationErrors({});
                                                 // Reset to original values
-                                                const profileData = adminData?.getAdminProfile || {};
+                                                const profileData = adminData?.me || {};
                                                 const phone = profileData.phone || user.phone || "";
                                                 if (phone.startsWith("998")) {
                                                     setCountryCode("998");
@@ -502,7 +510,7 @@ export default function Settings() {
                                     <div
                                         className="px-4 py-3 rounded-xl border-2 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-gray-600"
                                     >
-                                        {adminData?.getAdminProfile?.tgUsername || user.tgUsername || '-'}
+                                        {adminData?.me?.tgUsername || user.tgUsername || '-'}
                                     </div>
                                 )}
                                 {profileValidationErrors.tgUsername && (
@@ -549,7 +557,7 @@ export default function Settings() {
                                     <div
                                         className="px-4 py-3 rounded-xl border-2 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-gray-600"
                                     >
-                                        {(adminData?.getAdminProfile?.phone || user.phone) ? `+${adminData?.getAdminProfile?.phone || user.phone}` : '-'}
+                                        {(adminData?.me?.phone || user.phone) ? `+${adminData?.me?.phone || user.phone}` : '-'}
                                     </div>
                                 )}
                                 {profileValidationErrors.phone && (
