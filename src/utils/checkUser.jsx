@@ -1,3 +1,5 @@
+import { getSubdomainRole } from "./getSubdomainRole.js";
+
 /**
  * checkUser - Permission checking utility
  * 
@@ -9,22 +11,9 @@
  * @returns {boolean|string} - Returns true if user has permission, false otherwise, or user role if returnRole is true
  */
 export default function checkUser(allowedRoles, returnRole = false) {
-    // Get role from subdomain
-    const getRoleFromSubdomain = () => {
-        const host = window.location.hostname;
-        const parts = host.split(".");
-
-        // If hostname has at least 3 parts (e.g., root.elli.uz)
-        if (parts.length >= 3) {
-            return parts[0]; // root or admin or teacher
-        }
-
-        // Fallback to environment variable for mock/development
-        return import.meta.env.VITE_SUBDOMAIN; // mock
-    };
 
     // Get user role - prioritize localStorage, fallback to subdomain
-    const userRole = localStorage.getItem("userRole") || getRoleFromSubdomain();
+    const userRole = localStorage.getItem("userRole") || getSubdomainRole();
 
     // If returnRole is true, return the current user's role
     if (returnRole) {

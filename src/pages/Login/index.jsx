@@ -5,6 +5,7 @@ import { useMutation } from "@apollo/client/react"
 import LoginError from "../../components/auth/LoginError.jsx";
 import LoginForm from "../../components/auth/LoginForm.jsx";
 import { useDarkMode } from "../../contexts/DarkModeContext";
+import { getSubdomainRole } from "../../utils/getSubdomainRole";
 
 const LOGIN_MUTATION = gql`
   mutation Login($username: String!, $password: String!, $userType: String!) {
@@ -24,20 +25,6 @@ export default function Login() {
 
     const navigate = useNavigate();
     const { isDarkMode } = useDarkMode();
-
-    // Get userType from subdomain
-    const getUserTypeFromSubdomain = () => {
-        const host = window.location.hostname;
-        const parts = host.split(".");
-
-        // If hostname has at least 3 parts (e.g., root.elli.uz)
-        if (parts.length >= 3) {
-            return parts[0]; // root or admin or teacher
-        }
-
-        // Fallback to environment variable for mock/development
-        return import.meta.env.VITE_SUBDOMAIN || "root"; // default to root
-    };
 
     // Use Apollo Client's useMutation hook with error policy
     const [loginMutation, { loading, error }] = useMutation(LOGIN_MUTATION, {
@@ -74,9 +61,9 @@ export default function Login() {
         }
 
         try {
-            const userType = getUserTypeFromSubdomain();
+            const userType = getSubdomainRole();
             console.log("🔍 Detected userType from subdomain:", userType);
-            
+
             const variables = {
                 username: username.trim(),
                 password: password.trim(),
