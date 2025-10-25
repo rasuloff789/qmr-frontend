@@ -95,25 +95,41 @@ export default function Settings() {
     // Initialize profile editing when user data loads
     useEffect(() => {
         if (data?.me) {
+            console.log("🔍 ME Query Response:", data.me);
             const role = data.me.role;
-            // Allow editing for admin and teacher roles
-            setCanEditProfile(role === "admin" || role === "teacher");
+            console.log("👤 User Role:", role);
+            
+            // Allow editing for admin and teacher roles (case-insensitive check)
+            const normalizedRole = role?.toLowerCase();
+            const canEdit = normalizedRole === "admin" || normalizedRole === "teacher";
+            console.log("✏️ Can Edit Profile:", canEdit);
+            setCanEditProfile(canEdit);
 
             // Initialize profile fields if editable
-            if (role === "admin" || role === "teacher") {
+            if (canEdit) {
+                console.log("📱 Admin/Teacher data:", {
+                    tgUsername: data.me.tgUsername,
+                    phone: data.me.phone
+                });
+                
                 setTgUsername(data.me.tgUsername || "");
                 const phone = data.me.phone || "";
-                
+                console.log("📞 Phone value:", phone);
+
                 // Extract country code and phone number
-                if (phone.startsWith("998")) {
+                if (phone && phone.startsWith("998")) {
                     setCountryCode("998");
                     setPhoneNumber(phone.substring(3));
-                } else if (phone.startsWith("90")) {
+                } else if (phone && phone.startsWith("90")) {
                     setCountryCode("90");
                     setPhoneNumber(phone.substring(2));
-                } else {
+                } else if (phone) {
                     setCountryCode("998");
                     setPhoneNumber(phone);
+                } else {
+                    // No phone - set defaults
+                    setCountryCode("998");
+                    setPhoneNumber("");
                 }
             }
         }
@@ -351,6 +367,14 @@ export default function Settings() {
                     {/* Profile Editing Section - Only for admins and teachers */}
                     {canEditProfile && (
                         <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
+                            {/* Debug Info */}
+                            <div className="mb-4 p-3 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg text-xs">
+                                <p><strong>Debug:</strong> canEditProfile={canEditProfile.toString()}</p>
+                                <p><strong>tgUsername:</strong> {user.tgUsername || "undefined"}</p>
+                                <p><strong>phone:</strong> {user.phone || "undefined"}</p>
+                                <p><strong>role:</strong> {user.role || "undefined"}</p>
+                            </div>
+
                             {/* Success Message */}
                             {profileSuccess && (
                                 <div
