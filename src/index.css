@@ -44,4 +44,31 @@
   button {
     @apply cursor-pointer;
   }
+  
+  /* Dark mode input fixes for Safari */
+  html.dark input[type="text"],
+  html.dark input[type="tel"],
+  html.dark input[type="date"],
+  html.dark input[type="password"],
+  html.dark select,
+  html.dark textarea {
+    background-color: #374151 !important;
+    border-color: #4b5563 !important;
+    color: #ffffff !important;
+  }
+  
+  html.dark input[type="text"]:disabled,
+  html.dark input[type="tel"]:disabled,
+  html.dark input[type="date"]:disabled,
+  html.dark select:disabled {
+    background-color: #374151 !important;
+    color: #9ca3af !important;
+  }
+  
+  html.dark input[type="text"]:read-only,
+  html.dark input[type="tel"]:read-only,
+  html.dark input[type="date"]:read-only {
+    background-color: #374151 !important;
+    color: #9ca3af !important;
+  }
 }
