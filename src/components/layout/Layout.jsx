@@ -76,10 +76,10 @@ export default function Layout() {
         >
             <Sidebar />
 
-            <div className="flex-1 overflow-y-auto overflow-x-auto">
-                {/* Header */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+                {/* Header - Fixed at top */}
                 <div
-                    className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800"
+                    className="sticky top-0 z-10 px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800 shadow-sm"
                     style={headerStyles}
                 >
                     {/* Left side - Back button or Title */}
@@ -183,8 +183,8 @@ export default function Layout() {
                     </div>
                 </div>
 
-                {/* Main Content */}
-                <main className="flex-1 overflow-y-auto px-6 py-4">
+                {/* Main Content - Scrollable */}
+                <main className="flex-1 overflow-y-auto overflow-x-auto px-6 py-4">
                     <Outlet />
                 </main>
             </div>

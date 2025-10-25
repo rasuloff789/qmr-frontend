@@ -80,7 +80,7 @@ export default function AdminPage() {
     const [changeAdminMutation, { loading: mutationLoading, error: mutationError }] = useMutation(CHANGE_ADMIN, {
         onCompleted: (data) => {
             console.log("✅ Admin updated successfully:", data);
-            
+
             // Check if mutation was successful
             if (data?.changeAdmin?.success) {
                 setIsEditing(false);
