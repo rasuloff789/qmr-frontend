@@ -137,6 +137,14 @@ i18n.use(initReactI18next).init({
 				oldPasswordRequired: "Old password is required",
 				passwordChangedSuccess: "Password changed successfully!",
 				userNotFound: "User not found",
+				// Profile
+				profile: "Profile",
+				edit: "Edit",
+				save: "Save",
+				noChanges: "No changes detected",
+				profileUpdatedSuccess: "Profile updated successfully!",
+				// Change Password
+				change: "Change",
 			},
 		},
 		uz: {
@@ -265,6 +273,14 @@ i18n.use(initReactI18next).init({
 				oldPasswordRequired: "Eski parol talab etiladi",
 				passwordChangedSuccess: "Parol muvaffaqiyatli o'zgartirildi!",
 				userNotFound: "Foydalanuvchi topilmadi",
+				// Profile
+				profile: "Profil",
+				edit: "Tahrirlash",
+				save: "Saqlash",
+				noChanges: "O'zgarishlar aniqlanmadi",
+				profileUpdatedSuccess: "Profil muvaffaqiyatli yangilandi!",
+				// Change Password
+				change: "O'zgartirish",
 			},
 		},
 	},
