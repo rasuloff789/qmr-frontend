@@ -53,7 +53,7 @@ function AddAdminModal({
                     }}
                 >
                     {/* Header with light blue colors */}
-                    <div className="bg-gradient-to-r from-blue-400 to-blue-500 rounded-t-xl p-4">
+                    <div className="bg-linear-to-r from-blue-400 to-blue-500 rounded-t-xl p-4">
                         <AddAdminFormHeader setOpen={(open) => setField('open', open)} setField={setField} />
                     </div>
 

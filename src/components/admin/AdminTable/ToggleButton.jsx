@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
+import { useDarkMode } from "../../../contexts/DarkModeContext";
 
 const CHANGE_ADMIN_ACTIVE = gql`
   mutation ChangeAdminActive($id: ID!, $isActive: Boolean!) {
@@ -14,6 +15,7 @@ const CHANGE_ADMIN_ACTIVE = gql`
 
 export default function ToggleButtonAdminsTable({ admin }) {
     const { t: translate } = useTranslation();
+    const { isDarkMode } = useDarkMode();
     const [isActive, setIsActive] = useState(admin.isActive);
     const [changeAdminActive, { loading }] = useMutation(CHANGE_ADMIN_ACTIVE, {
         onError: () => alert(translate("errorOccured")),
@@ -50,6 +52,9 @@ export default function ToggleButtonAdminsTable({ admin }) {
                     ${isActive ? "bg-green-400" : "bg-gray-200"}
                     ${loading ? "opacity-70 pointer-events-none" : ""}
                 `}
+                style={{
+                    backgroundColor: isActive ? '#4ade80' : (isDarkMode ? '#374151' : '#e5e7eb')
+                }}
             >
                 <div
                     className={`
@@ -57,6 +62,10 @@ export default function ToggleButtonAdminsTable({ admin }) {
                         transition-all duration-300
                         ${isActive ? "translate-x-5" : ""}
                     `}
+                    style={{
+                        backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
+                        borderColor: isDarkMode ? '#4b5563' : '#d1d5db'
+                    }}
                 ></div>
             </div>
         </label>
