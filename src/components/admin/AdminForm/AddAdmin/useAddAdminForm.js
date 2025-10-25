@@ -11,7 +11,7 @@ export function useAddAdminForm(onAdminAdded = null) {
 
 	// Mutation with error policy
 	const [addAdminMutation, { loading, error }] = useMutation(ADD_ADMIN, {
-		errorPolicy: 'all',
+		errorPolicy: "all",
 		onCompleted: (data) => {
 			console.log("✅ Admin added successfully:", data);
 			// Clear form and close modal on success

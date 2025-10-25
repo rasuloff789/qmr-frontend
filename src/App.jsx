@@ -15,13 +15,13 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { DarkModeProvider } from "./contexts/DarkModeContext";
-import RequireAuth from "./components/RequireAuth";
-import Layout from "./components/Layout";
+import RequireAuth from "./components/auth/RequireAuth";
+import Layout from "./components/layout/Layout";
 import Login from "./pages/Login";
-import Home from "./pages/Home";
-import AdminsPage from "./pages/AdminsPage";
-import AdminPage from "./pages/AdminPage";
-import ComingSoonPage from "./pages/ComingSoonPage.jsx";
+import Dashboard from "./pages/Dashboard";
+import AdminsPage from "./pages/Admins";
+import AdminPage from "./pages/Admin";
+import ComingSoonPage from "./pages/ComingSoon";
 
 /**
  * App Component
@@ -49,14 +49,14 @@ export default function App() {
             <Route element={<Layout />}>
               {/* Redirect root path to dashboard */}
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              
+
               {/* Main dashboard page */}
-              <Route path="/dashboard" element={<Home />} />
-              
+              <Route path="/dashboard" element={<Dashboard />} />
+
               {/* Admin management pages */}
               <Route path="/admins" element={<AdminsPage />} />
               <Route path="/admin/:id" element={<AdminPage />} />
-              
+
               {/* Placeholder routes for future development */}
               {/* These routes prevent 404 errors and show "Coming Soon" page */}
               <Route path="/students" element={<ComingSoonPage titleKey="students" />} />

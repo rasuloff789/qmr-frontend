@@ -1,10 +1,10 @@
 import React from "react";
 import * as ReactDOM from "react-dom/client";
 import { ApolloProvider } from "@apollo/client/react";
-import client from "./ApolloClient.js";
+import client from "./api/apollo/client";
 import App from "./App";
 import "./index.css";
-import "./i18n"; // agar bor bo‘lsa
+import "./config/i18n";
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(

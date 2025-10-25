@@ -85,7 +85,7 @@ export default function Login() {
 
         } catch (err) {
             console.error("Login error:", err);
-            
+
             // Check for specific error types
             if (err.networkError?.statusCode === 500) {
                 setErrorMessage("Backend server error (500). Please contact the administrator.");
@@ -96,7 +96,7 @@ export default function Login() {
             } else {
                 setErrorMessage("An unexpected error occurred. Please try again.");
             }
-            
+
             setLogErr(true);
         }
     }, [username, password, navigate, loginMutation]);

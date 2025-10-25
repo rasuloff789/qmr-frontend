@@ -1,45 +1,88 @@
-import { useState } from "react";
+/**
+ * Layout.jsx - Main Layout Component
+ * 
+ * Provides consistent layout structure for authenticated pages including:
+ * - Sidebar navigation
+ * - Header with back button and controls
+ * - Dark mode toggle
+ * - Language selector
+ * - Main content area
+ * 
+ * @component
+ */
+
+import { useMemo, useCallback } from "react";
 import { Sidebar } from "./Sidebar.jsx";
 import { useTranslation } from "react-i18next";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useDarkMode } from "../contexts/DarkModeContext";
 
+/**
+ * Layout Component
+ * 
+ * Main wrapper for authenticated pages with sidebar and header controls.
+ * 
+ * @returns {JSX.Element} Layout with sidebar and content area
+ */
 export default function Layout() {
     const { t: translate, i18n } = useTranslation();
     const location = useLocation();
     const navigate = useNavigate();
     const { isDarkMode, toggleDarkMode } = useDarkMode();
 
-    // Debug dark mode state
-    console.log("🌙 Dark mode state:", isDarkMode);
+    // Check if we're on an admin detail page (for showing back button)
+    const isAdminDetailPage = useMemo(() => {
+        return location.pathname.match(/^\/admin\/[^/]+$/);
+    }, [location.pathname]);
 
-    console.log("🔍 Layout - Current path:", location.pathname);
-
-    // Check if we're on an admin detail page
-    const isAdminDetailPage = location.pathname.match(/^\/admin\/[^/]+$/);
-
-    const handleBackClick = () => {
-        console.log("🔍 Layout - Back button clicked");
-        // Navigate back to admins list
+    // Navigate back to admins list
+    const handleBackClick = useCallback(() => {
         navigate('/admins');
-    };
+    }, [navigate]);
+
+    // Get page title based on current route
+    const pageTitle = useMemo(() => {
+        const path = location.pathname;
+        if (path === "/") return translate("Dashboard");
+        if (path === "/admins") return translate("Admins");
+        if (path.startsWith("/admin/")) return translate("Admin Details");
+        return translate("Qomar Qur'on Markazi");
+    }, [location.pathname, translate]);
+
+    // Memoize header styles for dark mode
+    const headerStyles = useMemo(() => ({
+        backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
+        borderColor: isDarkMode ? '#374151' : '#f3f4f6',
+        color: isDarkMode ? '#ffffff' : '#111827'
+    }), [isDarkMode]);
+
+    // Memoize container styles
+    const containerStyles = useMemo(() => ({
+        backgroundColor: isDarkMode ? '#111827' : '#f9fafb',
+        color: isDarkMode ? '#ffffff' : '#111827'
+    }), [isDarkMode]);
+
+    // Memoize dark mode toggle button styles
+    const toggleButtonStyles = useMemo(() => ({
+        backgroundColor: isDarkMode ? '#374151' : '#e5e7eb',
+        transform: 'translateZ(0)',
+        willChange: 'transform, background-color'
+    }), [isDarkMode]);
 
     return (
-        <div className="flex w-screen h-screen bg-gray-50 dark:bg-gray-900" style={{
-            backgroundColor: isDarkMode ? '#111827' : '#f9fafb',
-            color: isDarkMode ? '#ffffff' : '#111827'
-        }}>
+        <div
+            className="flex w-screen h-screen bg-gray-50 dark:bg-gray-900"
+            style={containerStyles}
+        >
             <Sidebar />
+
             <div className="flex-1 overflow-y-auto overflow-x-auto">
+                {/* Header */}
                 <div
                     className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800"
-                    style={{
-                        backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
-                        borderColor: isDarkMode ? '#374151' : '#f3f4f6',
-                        color: isDarkMode ? '#ffffff' : '#111827'
-                    }}
+                    style={headerStyles}
                 >
-                    {/* Back button for /admin/:id route */}
+                    {/* Left side - Back button or Title */}
                     {isAdminDetailPage ? (
                         <button
                             onClick={handleBackClick}
@@ -54,36 +97,27 @@ export default function Layout() {
                         <div className="flex items-center">
                             <h1
                                 className="text-lg font-medium text-gray-800 dark:text-white"
-                                style={{
-                                    color: isDarkMode ? '#ffffff' : '#1f2937'
-                                }}
+                                style={headerStyles}
                             >
-                                {location.pathname === "/" ? translate("Dashboard") :
-                                    location.pathname === "/admins" ? translate("Admins") :
-                                        location.pathname.startsWith("/admin/") ? translate("Admin Details") :
-                                            translate("Qomar Qur'on Markazi")}
+                                {pageTitle}
                             </h1>
                         </div>
                     )}
+
+                    {/* Right side - Dark mode toggle and language selector */}
                     <div className="flex items-center gap-3">
-                        {/* Dark Mode Toggle Switch */}
+                        {/* Dark Mode Toggle */}
                         <div className="flex items-center gap-3">
                             <span className="text-xs text-gray-500 dark:text-gray-400">
                                 {isDarkMode ? 'Dark' : 'Light'}
                             </span>
 
-                            {/* Toggle Switch with Sun (Left) and Moon (Right) */}
+                            {/* Sun/Moon Toggle Switch */}
                             <div className="relative">
                                 <button
-                                    onClick={() => {
-                                        toggleDarkMode();
-                                    }}
+                                    onClick={toggleDarkMode}
                                     className="flex items-center rounded-full p-1 transition-all duration-500 ease-in-out hover:scale-110 active:scale-95 shadow-lg hover:shadow-xl"
-                                    style={{
-                                        backgroundColor: isDarkMode ? '#374151' : '#e5e7eb',
-                                        transform: 'translateZ(0)', // Force hardware acceleration
-                                        willChange: 'transform, background-color'
-                                    }}
+                                    style={toggleButtonStyles}
                                     title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
                                 >
                                     {/* Sun Icon (Left) */}
@@ -148,6 +182,8 @@ export default function Layout() {
                         </select>
                     </div>
                 </div>
+
+                {/* Main Content */}
                 <main className="flex-1 overflow-y-auto px-6 py-4">
                     <Outlet />
                 </main>
