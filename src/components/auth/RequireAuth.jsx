@@ -27,6 +27,7 @@ const ME_QUERY = gql`
       id
       username
       fullname
+      role
     }
   }
 `;
@@ -85,12 +86,21 @@ export default function RequireAuth() {
                 me: {
                     id: "mock-user-id",
                     username: "admin",
-                    fullname: "Admin User"
+                    fullname: "Admin User",
+                    role: "root"
                 }
             };
         }
         return data;
     }, [hasValidToken, error, data]);
+
+    // Save user role to localStorage when data is received
+    useEffect(() => {
+        if (mockData?.me?.role) {
+            localStorage.setItem("userRole", mockData.me.role);
+            console.log("✅ User role saved to localStorage:", mockData.me.role);
+        }
+    }, [mockData]);
 
     // Handle authentication failure
     useEffect(() => {
@@ -98,8 +108,9 @@ export default function RequireAuth() {
             const authFailed = error && !error.networkError || !mockData?.me;
 
             if (authFailed) {
-                // Clear invalid token and redirect to login
+                // Clear invalid token and role, then redirect to login
                 localStorage.removeItem("authentification");
+                localStorage.removeItem("userRole");
                 navigate("/login", { replace: true });
             }
         }
