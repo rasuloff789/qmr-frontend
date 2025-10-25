@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { memo } from "react";
-import { useDarkMode } from "../../../../../contexts/DarkModeContext";
+import { useDarkMode } from "../../../contexts/DarkModeContext";
 
 function DateTimeInput({ birthDate, setBirthDate, error }) {
     const { t: translate } = useTranslation();
