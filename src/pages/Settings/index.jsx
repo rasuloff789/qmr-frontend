@@ -491,22 +491,30 @@ export default function Settings() {
                                             value={countryCode}
                                             onChange={(e) => setCountryCode(e.target.value)}
                                             disabled={profileLoading}
-                                            className="w-24 px-3 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                                            className="px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 cursor-pointer"
                                             style={{
                                                 backgroundColor: isDarkMode ? '#374151' : '#f9fafb',
                                                 borderColor: profileValidationErrors.phone ? '#ef4444' : (isDarkMode ? '#4b5563' : '#e5e7eb'),
-                                                color: isDarkMode ? '#f3f4f6' : '#111827'
+                                                color: isDarkMode ? '#f3f4f6' : '#111827',
+                                                appearance: 'none',
+                                                backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")',
+                                                backgroundRepeat: 'no-repeat',
+                                                backgroundPosition: 'right 0.7rem center',
+                                                backgroundSize: '1em',
+                                                paddingRight: '2.5rem',
+                                                minWidth: '100px'
                                             }}
                                         >
-                                            <option value="998">+998</option>
-                                            <option value="90">+90</option>
+                                            <option value="998">🇺🇿 +998</option>
+                                            <option value="90">🇹🇷 +90</option>
                                         </select>
                                         <input
-                                            type="text"
+                                            type="tel"
                                             value={phoneNumber}
                                             onChange={(e) => setPhoneNumber(e.target.value)}
                                             disabled={profileLoading}
                                             placeholder="901234567"
+                                            maxLength="15"
                                             className="flex-1 px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                                             style={{
                                                 backgroundColor: isDarkMode ? '#374151' : '#f9fafb',
@@ -516,10 +524,15 @@ export default function Settings() {
                                         />
                                     </div>
                                 ) : (
-                                    <div
-                                        className="px-4 py-3 rounded-xl border-2 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-gray-600"
-                                    >
-                                        {user.phone ? `+${user.phone}` : '-'}
+                                    <div className="px-4 py-3 rounded-xl border-2 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-gray-600 flex items-center gap-2">
+                                        {user.phone ? (
+                                            <>
+                                                <span className="text-lg">
+                                                    {user.phone.startsWith('998') ? '🇺🇿' : '🇹🇷'}
+                                                </span>
+                                                <span>+{user.phone}</span>
+                                            </>
+                                        ) : '-'}
                                     </div>
                                 )}
                                 {profileValidationErrors.phone && (
