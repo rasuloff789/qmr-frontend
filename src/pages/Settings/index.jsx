@@ -22,8 +22,10 @@ const ME_QUERY = gql`
 // Query to get admin profile data (for admins only)
 // Using me query with all fields that should work for admin
 const GET_ADMIN_PROFILE = gql`
-  query Me {
+  query GetAdminProfileData {
     me {
+      id
+      role
       ... on Admin {
         phone
         tgUsername
@@ -104,13 +106,25 @@ export default function Settings() {
     const { data: adminData, loading: adminLoading, error: adminError, refetch: refetchAdminProfile } = useQuery(GET_ADMIN_PROFILE, {
         skip: !canEditProfileValue, // Only fetch if user is admin/teacher
         errorPolicy: "all",
+        fetchPolicy: "network-only", // Force network request
         onCompleted: (data) => {
+            console.log("✅ Admin Profile Query Completed:", data);
             console.log("📱 Admin Profile Data:", data);
         },
         onError: (error) => {
             console.error("❌ Admin Profile Query Error:", error);
         }
     });
+
+    // Debug admin query state
+    useEffect(() => {
+        console.log("🔍 Admin Query State:", {
+            skip: !canEditProfileValue,
+            loading: adminLoading,
+            error: adminError,
+            data: adminData
+        });
+    }, [canEditProfileValue, adminLoading, adminError, adminData]);
 
     // Initialize profile editing when user data loads
     useEffect(() => {
