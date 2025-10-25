@@ -54,7 +54,8 @@ export default function Login() {
             console.log("Sending login request with variables:", variables);
 
             // For development: Use mock login if backend is not working
-            if (username.trim() === "admin" && password.trim() === "admin123") {
+            if ((username.trim() === "admin" && password.trim() === "admin123") || 
+                (username.trim() === "farrux" && password.trim() === "passw")) {
                 console.log("✅ Mock login successful");
                 localStorage.setItem("authentification", `Bearer mock-token-${Date.now()}`);
                 navigate("/");
@@ -87,7 +88,7 @@ export default function Login() {
             if (result.errors) {
                 console.error("GraphQL errors:", result.errors);
                 // If backend is not working, show helpful message
-                setErrorMessage("Backend authentication failed. Try username: 'admin', password: 'admin123' for development");
+                setErrorMessage("Backend authentication failed. Try username: 'admin', password: 'admin123' or username: 'farrux', password: 'passw' for development");
                 setLogErr(true);
                 setLoading(false);
                 return;
@@ -106,7 +107,7 @@ export default function Login() {
 
         } catch (err) {
             console.error("Login error:", err);
-            setErrorMessage("Network error. Try username: 'admin', password: 'admin123' for development");
+            setErrorMessage("Network error. Try username: 'admin', password: 'admin123' or username: 'farrux', password: 'passw' for development");
             setLogErr(true);
         } finally {
             setLoading(false);
