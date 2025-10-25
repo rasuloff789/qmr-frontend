@@ -2,8 +2,10 @@ import React, { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react"
+import { useTranslation } from "react-i18next";
 import LoginError from "../../components/auth/LoginError.jsx";
 import LoginForm from "../../components/auth/LoginForm.jsx";
+import ForgotPassword from "../../components/auth/ForgotPassword.jsx";
 import { useDarkMode } from "../../contexts/DarkModeContext";
 import { getSubdomainRole } from "../../utils/getSubdomainRole";
 
@@ -22,9 +24,11 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [logErr, setLogErr] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [showForgotPassword, setShowForgotPassword] = useState(false);
 
     const navigate = useNavigate();
     const { isDarkMode } = useDarkMode();
+    const { t: translate } = useTranslation();
 
     // Use Apollo Client's useMutation hook with error policy
     const [loginMutation, { loading, error }] = useMutation(LOGIN_MUTATION, {
@@ -144,7 +148,25 @@ export default function Login() {
                         />
                     )}
 
-                    {memoizedForm}
+                    {showForgotPassword ? (
+                        <ForgotPassword onBack={() => setShowForgotPassword(false)} />
+                    ) : (
+                        <>
+                            {memoizedForm}
+                            {/* Forgot Password Link */}
+                            <div className="mt-4 text-center">
+                                <button
+                                    onClick={() => setShowForgotPassword(true)}
+                                    className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                                    style={{
+                                        color: isDarkMode ? '#60a5fa' : '#2563eb'
+                                    }}
+                                >
+                                    {translate('forgotPassword') || 'Forgot Password?'}
+                                </button>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </>

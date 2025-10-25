@@ -12,6 +12,7 @@
   "dependencies": {
     "@apollo/client": "^4.0.7",
     "@tailwindcss/vite": "^4.1.15",
+    "firebase": "^12.4.0",
     "graphql": "^16.11.0",
     "i18next": "^25.6.0",
     "lucide-react": "^0.546.0",
