@@ -22,6 +22,7 @@ import Dashboard from "./pages/Dashboard";
 import AdminsPage from "./pages/Admins";
 import AdminPage from "./pages/Admin";
 import ComingSoonPage from "./pages/ComingSoon";
+import Settings from "./pages/Settings";
 
 /**
  * App Component
@@ -63,7 +64,7 @@ export default function App() {
               <Route path="/courses" element={<ComingSoonPage titleKey="courses" />} />
               <Route path="/teachers" element={<ComingSoonPage titleKey="teachers" />} />
               <Route path="/payments" element={<ComingSoonPage titleKey="payments" />} />
-              <Route path="/settings" element={<ComingSoonPage titleKey="settings" />} />
+              <Route path="/settings" element={<Settings />} />
             </Route>
           </Route>
 

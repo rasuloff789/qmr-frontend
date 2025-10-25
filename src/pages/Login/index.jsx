@@ -127,15 +127,15 @@ export default function Login() {
                 }}
             >
                 {/* Subtle background gradient */}
-                <div 
+                <div
                     className="absolute inset-0 opacity-5"
                     style={{
-                        background: isDarkMode 
+                        background: isDarkMode
                             ? 'radial-gradient(circle at 20% 50%, #10b981 0%, transparent 50%), radial-gradient(circle at 80% 50%, #10b981 0%, transparent 50%)'
                             : 'radial-gradient(circle at 20% 50%, #16a34a 0%, transparent 50%), radial-gradient(circle at 80% 50%, #16a34a 0%, transparent 50%)'
                     }}
                 ></div>
-                
+
                 <div className="relative z-10 px-4 w-full max-w-md">
                     {logErr && (
                         <LoginError
