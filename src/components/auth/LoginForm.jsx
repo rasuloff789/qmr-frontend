@@ -15,44 +15,62 @@ function LogInForm({ handleSubmit, username, setUsername, password, setPassword,
     }, [setPassword]);
 
     return (
-        <div 
-            className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-md"
-            style={{
-                backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
-                color: isDarkMode ? '#ffffff' : '#111827'
-            }}
-        >
-            <h2 
-                className="text-2xl font-bold text-center mb-6 text-gray-800 dark:text-white"
+        <div className="w-full max-w-md">
+            {/* Logo/Title Section */}
+            <div className="text-center mb-8">
+                <h1 
+                    className="text-3xl font-light mb-2"
+                    style={{
+                        color: isDarkMode ? '#10b981' : '#166534'
+                    }}
+                >
+                    Qomar Qur'on Markazi
+                </h1>
+                <p 
+                    className="text-sm"
+                    style={{
+                        color: isDarkMode ? '#9ca3af' : '#6b7280'
+                    }}
+                >
+                    {t("welcome") || "Welcome"}
+                </p>
+            </div>
+
+            {/* Login Card */}
+            <div 
+                className="p-8 rounded-2xl shadow-xl backdrop-blur-sm border"
                 style={{
-                    color: isDarkMode ? '#ffffff' : '#1f2937'
+                    backgroundColor: isDarkMode ? 'rgba(31, 41, 55, 0.9)' : 'rgba(255, 255, 255, 0.95)',
+                    borderColor: isDarkMode ? 'rgba(75, 85, 99, 0.3)' : 'rgba(209, 213, 219, 0.3)'
                 }}
             >
-                {t("login")}
-            </h2>
-            <form className="space-y-4" onSubmit={handleSubmit}>
+                <h2 
+                    className="text-xl font-light text-center mb-8"
+                    style={{
+                        color: isDarkMode ? '#f3f4f6' : '#1f2937'
+                    }}
+                >
+                    {t("login")}
+                </h2>
+            <form className="space-y-6" onSubmit={handleSubmit}>
                 {/* Username */}
-                <div>
-                    <label 
-                        className="block text-gray-700 dark:text-gray-300 mb-1" 
-                        htmlFor="username"
-                        style={{
-                            color: isDarkMode ? '#d1d5db' : '#374151'
-                        }}
-                    >
-                        {t("username")}
-                    </label>
+                <div className="space-y-2">
                     <input
                         type="text"
                         value={username}
                         id="username"
-                        placeholder={t("inputUsername")}
+                        placeholder={t("username")}
                         onChange={handleUsernameChange}
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                        className="w-full px-4 py-3 border-0 border-b-2 bg-transparent rounded-t-lg focus:outline-none focus:ring-0 transition-all duration-200"
                         style={{
-                            backgroundColor: isDarkMode ? '#374151' : '#ffffff',
                             color: isDarkMode ? '#f3f4f6' : '#111827',
-                            borderColor: isDarkMode ? '#6b7280' : '#d1d5db'
+                            borderBottomColor: isDarkMode ? '#4b5563' : '#d1d5db'
+                        }}
+                        onFocus={(e) => {
+                            e.target.style.borderBottomColor = '#10b981';
+                        }}
+                        onBlur={(e) => {
+                            e.target.style.borderBottomColor = isDarkMode ? '#4b5563' : '#d1d5db';
                         }}
                         required
                         disabled={loading}
@@ -60,27 +78,23 @@ function LogInForm({ handleSubmit, username, setUsername, password, setPassword,
                 </div>
 
                 {/* Password */}
-                <div>
-                    <label 
-                        className="block text-gray-700 dark:text-gray-300 mb-1" 
-                        htmlFor="password"
-                        style={{
-                            color: isDarkMode ? '#d1d5db' : '#374151'
-                        }}
-                    >
-                        {t("password")}
-                    </label>
+                <div className="space-y-2">
                     <input
                         type="password"
                         id="password"
                         value={password}
-                        placeholder={t("inputPassword")}
+                        placeholder={t("password")}
                         onChange={handlePasswordChange}
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                        className="w-full px-4 py-3 border-0 border-b-2 bg-transparent rounded-t-lg focus:outline-none focus:ring-0 transition-all duration-200"
                         style={{
-                            backgroundColor: isDarkMode ? '#374151' : '#ffffff',
                             color: isDarkMode ? '#f3f4f6' : '#111827',
-                            borderColor: isDarkMode ? '#6b7280' : '#d1d5db'
+                            borderBottomColor: isDarkMode ? '#4b5563' : '#d1d5db'
+                        }}
+                        onFocus={(e) => {
+                            e.target.style.borderBottomColor = '#10b981';
+                        }}
+                        onBlur={(e) => {
+                            e.target.style.borderBottomColor = isDarkMode ? '#4b5563' : '#d1d5db';
                         }}
                         required
                         disabled={loading}
@@ -91,11 +105,25 @@ function LogInForm({ handleSubmit, username, setUsername, password, setPassword,
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                    style={{
+                        backgroundColor: isDarkMode ? '#10b981' : '#16a34a'
+                    }}
                 >
-                    {loading ? t("loading") : t("login")}
+                    {loading ? (
+                        <span className="flex items-center justify-center gap-2">
+                            <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            {t("loading")}
+                        </span>
+                    ) : (
+                        t("login")
+                    )}
                 </button>
             </form>
+            </div>
         </div>
     );
 }

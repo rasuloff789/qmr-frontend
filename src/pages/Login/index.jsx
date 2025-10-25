@@ -121,19 +121,31 @@ export default function Login() {
     return (
         <>
             <div
-                className="min-h-screen flex items-center justify-center bg-green-200 dark:bg-gray-900"
+                className="min-h-screen flex items-center justify-center relative"
                 style={{
-                    backgroundColor: isDarkMode ? '#111827' : '#dcfce7'
+                    backgroundColor: isDarkMode ? '#111827' : '#f0fdf4'
                 }}
             >
-                {logErr && (
-                    <LoginError
-                        onClose={handleErrorClose}
-                        message={errorMessage}
-                    />
-                )}
+                {/* Subtle background gradient */}
+                <div 
+                    className="absolute inset-0 opacity-5"
+                    style={{
+                        background: isDarkMode 
+                            ? 'radial-gradient(circle at 20% 50%, #10b981 0%, transparent 50%), radial-gradient(circle at 80% 50%, #10b981 0%, transparent 50%)'
+                            : 'radial-gradient(circle at 20% 50%, #16a34a 0%, transparent 50%), radial-gradient(circle at 80% 50%, #16a34a 0%, transparent 50%)'
+                    }}
+                ></div>
+                
+                <div className="relative z-10 px-4 w-full max-w-md">
+                    {logErr && (
+                        <LoginError
+                            onClose={handleErrorClose}
+                            message={errorMessage}
+                        />
+                    )}
 
-                {memoizedForm}
+                    {memoizedForm}
+                </div>
             </div>
         </>
     );
