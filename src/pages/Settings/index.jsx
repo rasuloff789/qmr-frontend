@@ -94,26 +94,20 @@ export default function Settings() {
     // Initialize profile editing when user data loads
     useEffect(() => {
         if (data?.me) {
-            console.log("🔍 ME Query Response:", data.me);
-            console.log("📋 __typename:", data.me.__typename);
             const role = data.me.role;
-            console.log("👤 User Role:", role);
 
             // Allow editing for admin and teacher roles (case-insensitive check)
             const normalizedRole = role?.toLowerCase();
             const canEdit = normalizedRole === "admin" || normalizedRole === "teacher";
-            console.log("✏️ Can Edit Profile:", canEdit);
             setCanEditProfile(canEdit);
 
             // Initialize profile fields if editable
             if (canEdit) {
                 // Use ME query data which includes admin/teacher fields
                 const profileData = data?.me || {};
-                console.log("📱 Admin/Teacher data:", profileData);
 
                 setTgUsername(profileData.tgUsername || "");
                 const phone = profileData.phone || "";
-                console.log("📞 Phone value:", phone);
 
                 // Extract country code and phone number
                 if (phone && phone.startsWith("998")) {
@@ -367,16 +361,6 @@ export default function Settings() {
                     {/* Profile Editing Section - Only for admins and teachers */}
                     {canEditProfile && (
                         <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
-                            {/* Debug Info */}
-                            <div className="mb-4 p-3 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg text-xs">
-                                <p><strong>Debug:</strong> canEditProfile state={canEditProfile.toString()}, computed={canEditProfileValue.toString()}</p>
-                                <p><strong>tgUsername:</strong> {user.tgUsername || "undefined"}</p>
-                                <p><strong>phone:</strong> {user.phone || "undefined"}</p>
-                                <p><strong>birthDate:</strong> {user.birthDate || "undefined"}</p>
-                                <p><strong>isActive:</strong> {user.isActive ? "true" : user.isActive === false ? "false" : "undefined"}</p>
-                                <p><strong>role:</strong> {user.role || "undefined"}</p>
-                            </div>
-
                             {/* Success Message */}
                             {profileSuccess && (
                                 <div
