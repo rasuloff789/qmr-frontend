@@ -77,9 +77,9 @@ export default function Layout() {
             <Sidebar />
 
             <div className="flex-1 flex flex-col overflow-hidden">
-                {/* Header - Fixed at top - matches sidebar logo height */}
+                {/* Header - Fixed at top - matches sidebar logo section height */}
                 <div
-                    className="sticky top-0 z-10 px-6 h-20 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800 shadow-sm"
+                    className="sticky top-0 z-10 px-6 h-16 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800 shadow-sm"
                     style={headerStyles}
                 >
                     {/* Left side - Back button or Title */}
