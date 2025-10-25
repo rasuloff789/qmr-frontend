@@ -85,7 +85,8 @@ export default function Settings() {
 
     // Fetch user data
     const { data, loading, error, refetch } = useQuery(ME_QUERY, {
-        errorPolicy: "all"
+        errorPolicy: "all",
+        fetchPolicy: "cache-first" // Use cache first to prevent unnecessary reloads
     });
 
     // Determine if user can edit profile based on ME query data
@@ -134,8 +135,22 @@ export default function Settings() {
             if (data?.updateProfile?.success) {
                 setProfileSuccess(translate("profileUpdatedSuccess") || "Profile updated successfully!");
                 setIsEditingProfile(false);
-                // Refetch user data to update the UI
-                refetch();
+                // Refetch user data to update the UI silently without page reload
+                refetch().then(() => {
+                    // Update local state with new values after refetch
+                    const updatedUser = data?.updateProfile?.user;
+                    if (updatedUser) {
+                        const newPhone = updatedUser.phone || "";
+                        if (newPhone.startsWith("998")) {
+                            setCountryCode("998");
+                            setPhoneNumber(newPhone.substring(3));
+                        } else if (newPhone.startsWith("90")) {
+                            setCountryCode("90");
+                            setPhoneNumber(newPhone.substring(2));
+                        }
+                        setTgUsername(updatedUser.tgUsername || "");
+                    }
+                });
                 setTimeout(() => setProfileSuccess(""), 3000);
             } else {
                 const errors = data?.updateProfile?.errors || [];
