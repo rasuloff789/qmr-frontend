@@ -11,16 +11,16 @@ export default function ComingSoonPage({ title, titleKey }) {
 
     // Use titleKey for translation, fallback to title prop
     const pageTitle = titleKey ? translate(titleKey) : title;
-    
+
     // Check if this is the settings page
     const isSettingsPage = location.pathname === '/settings';
-    
+
     // Handle logout
     const handleLogout = () => {
         // Clear authentication
         localStorage.removeItem("authentification");
         localStorage.removeItem("userRole");
-        
+
         // Navigate to login
         navigate("/login");
     };
@@ -73,7 +73,7 @@ export default function ComingSoonPage({ title, titleKey }) {
                         <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
                         <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
                     </div>
-                    
+
                     {/* Exit/Logout Button - Only show on settings page */}
                     {isSettingsPage && (
                         <div className="mt-6">
