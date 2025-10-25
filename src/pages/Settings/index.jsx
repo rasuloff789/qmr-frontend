@@ -285,7 +285,12 @@ export default function Settings() {
     if (!user) return <div>{translate("userNotFound") || "User not found"}</div>;
 
     return (
-        <div className="max-w-4xl mx-auto px-4 py-8">
+        <div 
+            className="max-w-4xl mx-auto px-4 py-8 min-h-screen"
+            style={{
+                backgroundColor: isDarkMode ? '#111827' : '#f9fafb'
+            }}
+        >
             {/* Header */}
             <div className="mb-8 flex items-center justify-between">
                 <div>
