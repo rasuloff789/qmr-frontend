@@ -54,7 +54,7 @@ export default function Login() {
             console.log("Sending login request with variables:", variables);
 
             // For development: Use mock login if backend is not working
-            if ((username.trim() === "admin" && password.trim() === "admin123") || 
+            if ((username.trim() === "admin" && password.trim() === "admin123") ||
                 (username.trim() === "farrux" && password.trim() === "passw")) {
                 console.log("✅ Mock login successful");
                 localStorage.setItem("authentification", `Bearer mock-token-${Date.now()}`);
@@ -63,46 +63,63 @@ export default function Login() {
             }
 
             // Try real backend login
-            const response = await fetch('http://localhost:4000/graphql', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    query: `
-                        mutation Login($username: String!, $password: String!, $userType: String!) {
-                            login(username: $username, password: $password, userType: $userType) {
-                                token
-                                message
-                                success
+            try {
+                const response = await fetch('http://localhost:4000/graphql', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: `
+                            mutation Login($username: String!, $password: String!, $userType: String!) {
+                                login(username: $username, password: $password, userType: $userType) {
+                                    token
+                                    message
+                                    success
+                                }
                             }
-                        }
-                    `,
-                    variables
-                })
-            });
+                        `,
+                        variables
+                    })
+                });
 
-            const result = await response.json();
-            console.log("Login response:", result);
+                // Check if response is ok
+                if (!response.ok) {
+                    if (response.status === 500) {
+                        throw new Error("Backend server error (500). Using mock login instead.");
+                    }
+                    throw new Error(`Server error: ${response.status}`);
+                }
 
-            if (result.errors) {
-                console.error("GraphQL errors:", result.errors);
-                // If backend is not working, show helpful message
-                setErrorMessage("Backend authentication failed. Try username: 'admin', password: 'admin123' or username: 'farrux', password: 'passw' for development");
+                const result = await response.json();
+                console.log("Login response:", result);
+
+                if (result.errors) {
+                    console.error("GraphQL errors:", result.errors);
+                    // If backend is not working, show helpful message
+                    setErrorMessage("Backend authentication failed. Try username: 'admin', password: 'admin123' or username: 'farrux', password: 'passw' for development");
+                    setLogErr(true);
+                    setLoading(false);
+                    return;
+                }
+
+                const loginData = result.data?.login;
+                if (loginData?.success && loginData?.token) {
+                    localStorage.setItem("authentification", `Bearer ${loginData.token}`);
+                    navigate("/");
+                } else {
+                    setErrorMessage(loginData?.message || "Login failed");
+                    setLogErr(true);
+                    setUsername("");
+                    setPassword("");
+                }
+            } catch (backendError) {
+                console.error("Backend error:", backendError);
+                // If backend is completely down, show helpful message
+                setErrorMessage("Backend server is down. Try username: 'admin', password: 'admin123' or username: 'farrux', password: 'passw' for development");
                 setLogErr(true);
                 setLoading(false);
                 return;
-            }
-
-            const loginData = result.data?.login;
-            if (loginData?.success && loginData?.token) {
-                localStorage.setItem("authentification", `Bearer ${loginData.token}`);
-                navigate("/");
-            } else {
-                setErrorMessage(loginData?.message || "Login failed");
-                setLogErr(true);
-                setUsername("");
-                setPassword("");
             }
 
         } catch (err) {
