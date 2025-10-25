@@ -25,8 +25,10 @@ export default function Login() {
     const navigate = useNavigate();
     const { isDarkMode } = useDarkMode();
 
-    // Use Apollo Client's useMutation hook
-    const [loginMutation, { loading }] = useMutation(LOGIN_MUTATION);
+    // Use Apollo Client's useMutation hook with error policy
+    const [loginMutation, { loading, error }] = useMutation(LOGIN_MUTATION, {
+        errorPolicy: 'all'
+    });
 
     // Memoized error handler
     const handleErrorClose = useCallback(() => {
@@ -83,7 +85,18 @@ export default function Login() {
 
         } catch (err) {
             console.error("Login error:", err);
-            setErrorMessage("Network error. Try username: 'admin', password: 'admin123' or username: 'farrux', password: 'passw' for development");
+            
+            // Check for specific error types
+            if (err.networkError?.statusCode === 500) {
+                setErrorMessage("Backend server error (500). Please contact the administrator.");
+            } else if (err.networkError) {
+                setErrorMessage("Network error. Please check your connection.");
+            } else if (err.graphQLErrors && err.graphQLErrors.length > 0) {
+                setErrorMessage(err.graphQLErrors[0].message);
+            } else {
+                setErrorMessage("An unexpected error occurred. Please try again.");
+            }
+            
             setLogErr(true);
         }
     }, [username, password, navigate, loginMutation]);
