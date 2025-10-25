@@ -9,8 +9,9 @@ import {
 export function useAddAdminForm(onAdminAdded = null) {
 	const [formState, dispatch] = useReducer(formReducer, initialFormState);
 
-	// Mutation
+	// Mutation with error policy
 	const [addAdminMutation, { loading, error }] = useMutation(ADD_ADMIN, {
+		errorPolicy: 'all',
 		onCompleted: (data) => {
 			console.log("✅ Admin added successfully:", data);
 			// Clear form and close modal on success
@@ -23,6 +24,8 @@ export function useAddAdminForm(onAdminAdded = null) {
 		},
 		onError: (error) => {
 			console.error("❌ Add admin error:", error);
+			// Set error in form state
+			dispatch({ type: "SET_ERRORS", errors: { mutation: error.message } });
 		},
 	});
 
