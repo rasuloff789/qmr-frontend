@@ -1,10 +1,27 @@
+/**
+ * RequireAuth.jsx - Authentication Guard Component
+ * 
+ * This component protects routes that require authentication.
+ * It checks for a valid JWT token and verifies user identity.
+ * If authentication fails, redirects to login page.
+ * 
+ * Features:
+ * - Token validation
+ * - Automatic redirect on auth failure
+ * - Loading states
+ * - Network error handling
+ * 
+ * @component
+ */
+
 import React, { useEffect, useMemo } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
-import Loading from "../pages/Loading.jsx"
+import Loading from "../pages/Loading.jsx";
 
-const ME = gql`
+// GraphQL query to verify user identity
+const ME_QUERY = gql`
   query Me {
     me {
       id
@@ -14,52 +31,54 @@ const ME = gql`
   }
 `;
 
+/**
+ * RequireAuth Component
+ * 
+ * Validates JWT token and user authentication before rendering protected routes.
+ * 
+ * Flow:
+ * 1. Check for token in localStorage
+ * 2. If no token, redirect to login
+ * 3. If token exists, verify with ME query
+ * 4. If verification fails, redirect to login
+ * 5. If verification succeeds, render protected content
+ * 
+ * @returns {JSX.Element|null} Outlet for child routes or null if unauthorized
+ */
 export default function RequireAuth() {
     const navigate = useNavigate();
     const token = localStorage.getItem("authentification");
 
-    // Debug: Log token details (only when token changes)
-    console.log("🔍 RequireAuth Debug - Token changed:", token);
-
-    // Check if token exists and is valid format
+    // Check if token exists and has valid format
     const hasValidToken = useMemo(() => {
-        const isValid = token && token.startsWith("Bearer ");
-        console.log("Has valid token:", isValid);
-        return isValid;
+        return token && token.startsWith("Bearer ");
     }, [token]);
 
-    // Token yo'q bo'lsa — darhol login sahifasiga
+    // Redirect to login if no valid token
     useEffect(() => {
         if (!hasValidToken) {
-            console.log("No valid token found, redirecting to login");
-            console.log("Token value:", token);
-            console.log("Has valid token:", hasValidToken);
             navigate("/login", { replace: true });
         }
-    }, [hasValidToken, navigate, token]);
+    }, [hasValidToken, navigate]);
 
-    // Token bo'lsa, ME query yuboramiz - only if we have a valid token
-    const { data, loading, error } = useQuery(ME, {
+    // Verify user identity with GraphQL query
+    const { data, loading, error } = useQuery(ME_QUERY, {
         context: {
             headers: {
                 Authorization: token,
             },
         },
-        skip: !hasValidToken, // Skip query if no valid token
-        errorPolicy: "all", // Handle both network and GraphQL errors
-        onCompleted: (data) => {
-            console.log("✅ ME Query completed successfully:", data);
-        },
+        skip: !hasValidToken, // Skip query if no token
+        errorPolicy: "all", // Handle all errors gracefully
         onError: (error) => {
-            console.log("❌ ME Query error:", error);
-            // If it's a network error (server not running), mock the data
+            // Network errors indicate server is unavailable
             if (error.networkError) {
-                console.log("🔄 Network error detected - server not running, using mock data");
+                console.warn("Server unavailable - proceeding with mock data");
             }
         }
     });
 
-    // Mock data when server is not available
+    // Mock data for offline/development mode
     const mockData = useMemo(() => {
         if (hasValidToken && error?.networkError) {
             return {
@@ -73,36 +92,29 @@ export default function RequireAuth() {
         return data;
     }, [hasValidToken, error, data]);
 
-    console.log("📊 Query state:", { loading, error: !!error, data: !!data, hasValidToken });
-
+    // Handle authentication failure
     useEffect(() => {
         if (!loading && hasValidToken) {
-            if (error && !error.networkError || !mockData?.me) {
-                console.log("❌ Authentication failed - redirecting to login");
-                console.log("Error:", error);
-                console.log("Data:", mockData);
-                console.log("Has data.me:", !!mockData?.me);
+            const authFailed = error && !error.networkError || !mockData?.me;
+
+            if (authFailed) {
+                // Clear invalid token and redirect to login
                 localStorage.removeItem("authentification");
                 navigate("/login", { replace: true });
-            } else {
-                console.log("✅ Authentication successful:", mockData);
             }
         }
     }, [loading, error, mockData, navigate, hasValidToken]);
 
-    // Prevent unnecessary re-authentication on route changes
-    const shouldSkipAuth = useMemo(() => {
-        // Only run auth check once per session
-        return !hasValidToken;
-    }, [hasValidToken]);
-
-    // Don't render anything if no valid token
+    // Don't render if no valid token
     if (!hasValidToken) {
-        console.log("RequireAuth: No valid token, not rendering");
         return null;
     }
 
-    if (loading) return <Loading />;
+    // Show loading spinner while verifying
+    if (loading) {
+        return <Loading />;
+    }
 
+    // Render protected routes
     return <Outlet />;
 }
