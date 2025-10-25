@@ -15,8 +15,8 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { DarkModeProvider } from "./contexts/DarkModeContext";
-import RequireAuth from "./components/auth/RequireAuth";
-import Layout from "./components/layout/Layout";
+import RequireAuth from "./components/auth/RequireAuth.jsx";
+import Layout from "./components/layout/Layout.jsx";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import AdminsPage from "./pages/Admins";

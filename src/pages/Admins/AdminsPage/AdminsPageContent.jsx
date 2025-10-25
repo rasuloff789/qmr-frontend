@@ -1,5 +1,5 @@
 import { memo } from "react";
-import AdminsTable from "../../../../components/admin/AdminTable";
+import AdminsTable from "../../../../components/admin/AdminTable/index.jsx";
 import AdminsPageHeader from "./AdminsPageHeader";
 
 function AdminsPageContent({ search, onSearchChange, onAddAdmin, loading, admins, onAdminDeleted }) {

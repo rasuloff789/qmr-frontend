@@ -2,8 +2,8 @@ import React, { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react"
-import LoginError from "../../components/auth/LoginError";
-import LoginForm from "../../components/auth/LoginForm";
+import LoginError from "../../components/auth/LoginError.jsx";
+import LoginForm from "../../components/auth/LoginForm.jsx";
 import { useDarkMode } from "../../contexts/DarkModeContext";
 
 const LOGIN_MUTATION = gql`
