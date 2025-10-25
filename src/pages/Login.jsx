@@ -1,8 +1,19 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { gql, useMutation } from "@apollo/client";
 import LoginErr from "../components/LoginErr.jsx";
 import LogInForm from "../components/LogInForm.jsx";
 import { useDarkMode } from "../contexts/DarkModeContext";
+
+const LOGIN_MUTATION = gql`
+  mutation Login($username: String!, $password: String!, $userType: String!) {
+    login(username: $username, password: $password, userType: $userType) {
+      token
+      message
+      success
+    }
+  }
+`;
 
 export default function Login() {
     const [username, setUsername] = useState("");
@@ -12,7 +23,9 @@ export default function Login() {
 
     const navigate = useNavigate();
     const { isDarkMode } = useDarkMode();
-    const [loading, setLoading] = useState(false);
+    
+    // Use Apollo Client's useMutation hook
+    const [loginMutation, { loading }] = useMutation(LOGIN_MUTATION);
 
     // Memoized error handler
     const handleErrorClose = useCallback(() => {
@@ -44,7 +57,6 @@ export default function Login() {
         }
 
         try {
-            setLoading(true);
             const variables = {
                 username: username.trim(),
                 password: password.trim(),
@@ -62,20 +74,27 @@ export default function Login() {
                 return;
             }
 
-            // Backend is disabled due to server issues - show helpful error
-            console.log("⚠️ Backend has issues, skipping backend login attempt");
-            setErrorMessage("Backend server is experiencing issues. Please use mock credentials: username 'admin', password 'admin123' or username 'farrux', password 'passw' for testing.");
-            setLogErr(true);
-            setLoading(false);
+            // Try real backend login using useMutation
+            const result = await loginMutation({ variables });
+            console.log("Login response:", result);
+
+            const loginData = result.data?.login;
+            if (loginData?.success && loginData?.token) {
+                localStorage.setItem("authentification", `Bearer ${loginData.token}`);
+                navigate("/");
+            } else {
+                setErrorMessage(loginData?.message || "Login failed");
+                setLogErr(true);
+                setUsername("");
+                setPassword("");
+            }
 
         } catch (err) {
             console.error("Login error:", err);
             setErrorMessage("Network error. Try username: 'admin', password: 'admin123' or username: 'farrux', password: 'passw' for development");
             setLogErr(true);
-        } finally {
-            setLoading(false);
         }
-    }, [username, password, navigate]);
+    }, [username, password, navigate, loginMutation]);
 
 
     // Memoized form component to prevent unnecessary re-renders
