@@ -21,8 +21,9 @@ export default function ComingSoonPage({ title, titleKey }) {
         localStorage.removeItem("authentification");
         localStorage.removeItem("userRole");
 
-        // Navigate to login
-        navigate("/login");
+        // Navigate to login and refresh the page to clear all state
+        navigate("/login", { replace: true });
+        window.location.reload();
     };
 
     return (
