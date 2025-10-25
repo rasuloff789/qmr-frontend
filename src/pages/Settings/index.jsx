@@ -14,16 +14,18 @@ const ME_QUERY = gql`
       username
       fullname
       role
-      ... on Admin {
-        phone
-        tgUsername
-        birthDate
-      }
-      ... on Teacher {
-        phone
-        tgUsername
-        birthDate
-      }
+      __typename
+    }
+  }
+`;
+
+// Query to get admin profile data (for admins only)
+const GET_ADMIN_PROFILE = gql`
+  query GetAdminProfile {
+    getAdminProfile {
+      phone
+      tgUsername
+      birthDate
     }
   }
 `;
@@ -92,13 +94,23 @@ export default function Settings() {
         errorPolicy: "all"
     });
 
+    // Fetch admin profile data if user is admin/teacher
+    const { data: adminData, refetch: refetchAdminProfile } = useQuery(GET_ADMIN_PROFILE, {
+        skip: !canEditProfile, // Only fetch if user is admin/teacher
+        errorPolicy: "all",
+        onCompleted: (data) => {
+            console.log("📱 Admin Profile Data:", data);
+        }
+    });
+
     // Initialize profile editing when user data loads
     useEffect(() => {
         if (data?.me) {
             console.log("🔍 ME Query Response:", data.me);
+            console.log("📋 __typename:", data.me.__typename);
             const role = data.me.role;
             console.log("👤 User Role:", role);
-            
+
             // Allow editing for admin and teacher roles (case-insensitive check)
             const normalizedRole = role?.toLowerCase();
             const canEdit = normalizedRole === "admin" || normalizedRole === "teacher";
@@ -107,13 +119,12 @@ export default function Settings() {
 
             // Initialize profile fields if editable
             if (canEdit) {
-                console.log("📱 Admin/Teacher data:", {
-                    tgUsername: data.me.tgUsername,
-                    phone: data.me.phone
-                });
-                
-                setTgUsername(data.me.tgUsername || "");
-                const phone = data.me.phone || "";
+                // Use admin profile data if available, fallback to ME data
+                const profileData = adminData?.getAdminProfile || {};
+                console.log("📱 Admin/Teacher data:", profileData);
+
+                setTgUsername(profileData.tgUsername || data.me.tgUsername || "");
+                const phone = profileData.phone || data.me.phone || "";
                 console.log("📞 Phone value:", phone);
 
                 // Extract country code and phone number
@@ -133,7 +144,7 @@ export default function Settings() {
                 }
             }
         }
-    }, [data]);
+    }, [data, adminData]);
 
     // Update profile mutation (for admins and teachers)
     const [updateProfile, { loading: profileLoading }] = useMutation(UPDATE_PROFILE, {
@@ -143,6 +154,7 @@ export default function Settings() {
                 setIsEditingProfile(false);
                 // Refetch user data to update the UI
                 refetch();
+                refetchAdminProfile();
                 setTimeout(() => setProfileSuccess(""), 3000);
             } else {
                 const errors = data?.updateProfile?.errors || [];
@@ -201,8 +213,9 @@ export default function Settings() {
         }
 
         // Check if there are any changes
-        const currentPhone = data?.me?.phone || "";
-        const currentTgUsername = data?.me?.tgUsername || "";
+        const profileData = adminData?.getAdminProfile || {};
+        const currentPhone = profileData.phone || data?.me?.phone || "";
+        const currentTgUsername = profileData.tgUsername || data?.me?.tgUsername || "";
 
         if (phone === currentPhone && tgUsername === currentTgUsername) {
             setProfileValidationErrors({ general: translate("noChanges") || "No changes detected" });
@@ -370,8 +383,10 @@ export default function Settings() {
                             {/* Debug Info */}
                             <div className="mb-4 p-3 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg text-xs">
                                 <p><strong>Debug:</strong> canEditProfile={canEditProfile.toString()}</p>
-                                <p><strong>tgUsername:</strong> {user.tgUsername || "undefined"}</p>
-                                <p><strong>phone:</strong> {user.phone || "undefined"}</p>
+                                <p><strong>tgUsername (user):</strong> {user.tgUsername || "undefined"}</p>
+                                <p><strong>phone (user):</strong> {user.phone || "undefined"}</p>
+                                <p><strong>tgUsername (admin):</strong> {adminData?.getAdminProfile?.tgUsername || "undefined"}</p>
+                                <p><strong>phone (admin):</strong> {adminData?.getAdminProfile?.phone || "undefined"}</p>
                                 <p><strong>role:</strong> {user.role || "undefined"}</p>
                             </div>
 
@@ -441,7 +456,8 @@ export default function Settings() {
                                                 setIsEditingProfile(false);
                                                 setProfileValidationErrors({});
                                                 // Reset to original values
-                                                const phone = user.phone || "";
+                                                const profileData = adminData?.getAdminProfile || {};
+                                                const phone = profileData.phone || user.phone || "";
                                                 if (phone.startsWith("998")) {
                                                     setCountryCode("998");
                                                     setPhoneNumber(phone.substring(3));
@@ -449,7 +465,7 @@ export default function Settings() {
                                                     setCountryCode("90");
                                                     setPhoneNumber(phone.substring(2));
                                                 }
-                                                setTgUsername(user.tgUsername || "");
+                                                setTgUsername(profileData.tgUsername || user.tgUsername || "");
                                             }}
                                             className="px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 border"
                                             style={{
@@ -486,7 +502,7 @@ export default function Settings() {
                                     <div
                                         className="px-4 py-3 rounded-xl border-2 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-gray-600"
                                     >
-                                        {user.tgUsername || '-'}
+                                        {adminData?.getAdminProfile?.tgUsername || user.tgUsername || '-'}
                                     </div>
                                 )}
                                 {profileValidationErrors.tgUsername && (
@@ -533,7 +549,7 @@ export default function Settings() {
                                     <div
                                         className="px-4 py-3 rounded-xl border-2 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-gray-600"
                                     >
-                                        {user.phone ? `+${user.phone}` : '-'}
+                                        {(adminData?.getAdminProfile?.phone || user.phone) ? `+${adminData?.getAdminProfile?.phone || user.phone}` : '-'}
                                     </div>
                                 )}
                                 {profileValidationErrors.phone && (
