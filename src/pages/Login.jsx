@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { gql, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
+import { useMutation } from "@apollo/client/react"
 import LoginErr from "../components/LoginErr.jsx";
 import LogInForm from "../components/LogInForm.jsx";
 import { useDarkMode } from "../contexts/DarkModeContext";
@@ -23,7 +24,7 @@ export default function Login() {
 
     const navigate = useNavigate();
     const { isDarkMode } = useDarkMode();
-    
+
     // Use Apollo Client's useMutation hook
     const [loginMutation, { loading }] = useMutation(LOGIN_MUTATION);
 
@@ -65,28 +66,37 @@ export default function Login() {
 
             console.log("Sending login request with variables:", variables);
 
-            // For development: Use mock login if backend is not working
-            if ((username.trim() === "admin" && password.trim() === "admin123") ||
-                (username.trim() === "farrux" && password.trim() === "passw")) {
-                console.log("✅ Mock login successful");
-                localStorage.setItem("authentification", `Bearer mock-token-${Date.now()}`);
-                navigate("/");
-                return;
-            }
+            // Always try to call the backend mutation
+            try {
+                const result = await loginMutation({ variables });
+                console.log("Login response:", result);
 
-            // Try real backend login using useMutation
-            const result = await loginMutation({ variables });
-            console.log("Login response:", result);
-
-            const loginData = result.data?.login;
-            if (loginData?.success && loginData?.token) {
-                localStorage.setItem("authentification", `Bearer ${loginData.token}`);
-                navigate("/");
-            } else {
-                setErrorMessage(loginData?.message || "Login failed");
+                const loginData = result.data?.login;
+                if (loginData?.success && loginData?.token) {
+                    localStorage.setItem("authentification", `Bearer ${loginData.token}`);
+                    navigate("/");
+                    return;
+                } else {
+                    setErrorMessage(loginData?.message || "Login failed");
+                    setLogErr(true);
+                    setUsername("");
+                    setPassword("");
+                }
+            } catch (mutationError) {
+                console.error("Mutation error:", mutationError);
+                
+                // If backend fails, try mock login for development credentials
+                if ((username.trim() === "admin" && password.trim() === "admin123") ||
+                    (username.trim() === "farrux" && password.trim() === "passw")) {
+                    console.log("✅ Backend failed, using mock login");
+                    localStorage.setItem("authentification", `Bearer mock-token-${Date.now()}`);
+                    navigate("/");
+                    return;
+                }
+                
+                // For other credentials, show error
+                setErrorMessage("Backend authentication failed. Please use mock credentials: username 'admin', password 'admin123' or username 'farrux', password 'passw' for testing.");
                 setLogErr(true);
-                setUsername("");
-                setPassword("");
             }
 
         } catch (err) {
