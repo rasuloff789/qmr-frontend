@@ -20,8 +20,8 @@ const ME_QUERY = gql`
 
 // Mutation to change password
 const CHANGE_PASSWORD = gql`
-  mutation ChangePassword($oldPassword: String!, $newPassword: String!) {
-    changePassword(oldPassword: $oldPassword, newPassword: $newPassword) {
+  mutation ChangePassword($currentPassword: String!, $newPassword: String!) {
+    changePassword(currentPassword: $currentPassword, newPassword: $newPassword) {
       success
       message
       errors
@@ -98,7 +98,7 @@ export default function Settings() {
         try {
             await changePassword({
                 variables: {
-                    oldPassword,
+                    currentPassword: oldPassword,
                     newPassword
                 }
             });
@@ -141,7 +141,7 @@ export default function Settings() {
                         }}
                     ></div>
                 </div>
-                
+
                 {/* Logout Button */}
                 <button
                     onClick={handleLogout}
