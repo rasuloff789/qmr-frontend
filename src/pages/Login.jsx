@@ -62,6 +62,31 @@ export default function Login() {
                 return;
             }
 
+            // Check if backend is working before attempting login
+            let backendIsWorking = true;
+            try {
+                const healthCheck = await fetch('http://localhost:4000/graphql', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: "query { __typename }" })
+                });
+                
+                if (!healthCheck.ok) {
+                    backendIsWorking = false;
+                }
+            } catch {
+                backendIsWorking = false;
+            }
+
+            // If backend is not working, use mock login
+            if (!backendIsWorking) {
+                console.log("⚠️ Backend not working, skipping backend login");
+                setErrorMessage("Backend server is experiencing issues. Please try again later.");
+                setLogErr(true);
+                setLoading(false);
+                return;
+            }
+
             // Try real backend login
             try {
                 const response = await fetch('http://localhost:4000/graphql', {
