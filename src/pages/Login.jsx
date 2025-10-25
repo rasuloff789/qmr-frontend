@@ -66,37 +66,19 @@ export default function Login() {
 
             console.log("Sending login request with variables:", variables);
 
-            // Always try to call the backend mutation
-            try {
-                const result = await loginMutation({ variables });
-                console.log("Login response:", result);
+            // Call the backend mutation
+            const result = await loginMutation({ variables });
+            console.log("Login response:", result);
 
-                const loginData = result.data?.login;
-                if (loginData?.success && loginData?.token) {
-                    localStorage.setItem("authentification", `Bearer ${loginData.token}`);
-                    navigate("/");
-                    return;
-                } else {
-                    setErrorMessage(loginData?.message || "Login failed");
-                    setLogErr(true);
-                    setUsername("");
-                    setPassword("");
-                }
-            } catch (mutationError) {
-                console.error("Mutation error:", mutationError);
-                
-                // If backend fails, try mock login for development credentials
-                if ((username.trim() === "admin" && password.trim() === "admin123") ||
-                    (username.trim() === "farrux" && password.trim() === "passw")) {
-                    console.log("✅ Backend failed, using mock login");
-                    localStorage.setItem("authentification", `Bearer mock-token-${Date.now()}`);
-                    navigate("/");
-                    return;
-                }
-                
-                // For other credentials, show error
-                setErrorMessage("Backend authentication failed. Please use mock credentials: username 'admin', password 'admin123' or username 'farrux', password 'passw' for testing.");
+            const loginData = result.data?.login;
+            if (loginData?.success && loginData?.token) {
+                localStorage.setItem("authentification", `Bearer ${loginData.token}`);
+                navigate("/");
+            } else {
+                setErrorMessage(loginData?.message || "Login failed");
                 setLogErr(true);
+                setUsername("");
+                setPassword("");
             }
 
         } catch (err) {
