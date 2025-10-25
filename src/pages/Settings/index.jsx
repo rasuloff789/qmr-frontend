@@ -97,9 +97,12 @@ export default function Settings() {
         errorPolicy: "all"
     });
 
+    // Determine if user can edit profile based on ME query data
+    const canEditProfileValue = data?.me?.role && (data.me.role.toLowerCase() === "admin" || data.me.role.toLowerCase() === "teacher");
+
     // Fetch admin profile data if user is admin/teacher
     const { data: adminData, loading: adminLoading, error: adminError, refetch: refetchAdminProfile } = useQuery(GET_ADMIN_PROFILE, {
-        skip: !canEditProfile, // Only fetch if user is admin/teacher
+        skip: !canEditProfileValue, // Only fetch if user is admin/teacher
         errorPolicy: "all",
         onCompleted: (data) => {
             console.log("📱 Admin Profile Data:", data);
@@ -388,7 +391,8 @@ export default function Settings() {
                         <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
                             {/* Debug Info */}
                             <div className="mb-4 p-3 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg text-xs">
-                                <p><strong>Debug:</strong> canEditProfile={canEditProfile.toString()}</p>
+                                <p><strong>Debug:</strong> canEditProfile state={canEditProfile.toString()}, computed={canEditProfileValue.toString()}</p>
+                                <p><strong>Admin Query Skip:</strong> {!canEditProfileValue ? "Yes (skipped)" : "No"}</p>
                                 <p><strong>Admin Query Loading:</strong> {adminLoading ? "Yes" : "No"}</p>
                                 <p><strong>Admin Query Error:</strong> {adminError ? JSON.stringify(adminError) : "None"}</p>
                                 <p><strong>tgUsername (user):</strong> {user.tgUsername || "undefined"}</p>
