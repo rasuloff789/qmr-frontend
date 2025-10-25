@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { gql } from "@apollo/client";
 import { useQuery, useMutation } from "@apollo/client/react";
 import { useTranslation } from "react-i18next";
 import { useDarkMode } from "../../contexts/DarkModeContext";
 import { useNavigate } from "react-router-dom";
-import { validatePassword } from "../../utils/validators";
+import { validatePassword, validatePhoneNumber, validateTelegramUsername } from "../../utils/validators";
 
 // Query to get current user data (only fields available on root user type)
 const ME_QUERY = gql`
@@ -14,6 +14,39 @@ const ME_QUERY = gql`
       username
       fullname
       role
+      ... on Admin {
+        phone
+        tgUsername
+        birthDate
+      }
+      ... on Teacher {
+        phone
+        tgUsername
+        birthDate
+      }
+    }
+  }
+`;
+
+// Mutation to update profile (for admins and teachers only)
+const UPDATE_PROFILE = gql`
+  mutation UpdateProfile(
+    $phone: Phone
+    $tgUsername: String
+  ) {
+    updateProfile(
+      phone: $phone
+      tgUsername: $tgUsername
+    ) {
+      success
+      message
+      user {
+        id
+        phone
+        tgUsername
+      }
+      errors
+      timestamp
     }
   }
 `;
@@ -35,6 +68,17 @@ export default function Settings() {
     const { isDarkMode } = useDarkMode();
     const navigate = useNavigate();
 
+    // Check if user can edit profile (admin or teacher)
+    const [canEditProfile, setCanEditProfile] = useState(false);
+
+    // State for profile editing
+    const [isEditingProfile, setIsEditingProfile] = useState(false);
+    const [tgUsername, setTgUsername] = useState("");
+    const [countryCode, setCountryCode] = useState("998");
+    const [phoneNumber, setPhoneNumber] = useState("");
+    const [profileValidationErrors, setProfileValidationErrors] = useState({});
+    const [profileSuccess, setProfileSuccess] = useState("");
+
     // State for password change
     const [showPasswordChange, setShowPasswordChange] = useState(false);
     const [oldPassword, setOldPassword] = useState("");
@@ -44,8 +88,56 @@ export default function Settings() {
     const [passwordSuccess, setPasswordSuccess] = useState("");
 
     // Fetch user data
-    const { data, loading, error } = useQuery(ME_QUERY, {
+    const { data, loading, error, refetch } = useQuery(ME_QUERY, {
         errorPolicy: "all"
+    });
+
+    // Initialize profile editing when user data loads
+    useEffect(() => {
+        if (data?.me) {
+            const role = data.me.role;
+            // Allow editing for admin and teacher roles
+            setCanEditProfile(role === "admin" || role === "teacher");
+
+            // Initialize profile fields if editable
+            if (role === "admin" || role === "teacher") {
+                setTgUsername(data.me.tgUsername || "");
+                const phone = data.me.phone || "";
+                
+                // Extract country code and phone number
+                if (phone.startsWith("998")) {
+                    setCountryCode("998");
+                    setPhoneNumber(phone.substring(3));
+                } else if (phone.startsWith("90")) {
+                    setCountryCode("90");
+                    setPhoneNumber(phone.substring(2));
+                } else {
+                    setCountryCode("998");
+                    setPhoneNumber(phone);
+                }
+            }
+        }
+    }, [data]);
+
+    // Update profile mutation (for admins and teachers)
+    const [updateProfile, { loading: profileLoading }] = useMutation(UPDATE_PROFILE, {
+        onCompleted: (data) => {
+            if (data?.updateProfile?.success) {
+                setProfileSuccess(translate("profileUpdatedSuccess") || "Profile updated successfully!");
+                setIsEditingProfile(false);
+                // Refetch user data to update the UI
+                refetch();
+                setTimeout(() => setProfileSuccess(""), 3000);
+            } else {
+                const errors = data?.updateProfile?.errors || [];
+                const message = data?.updateProfile?.message || "Failed to update profile";
+                setProfileValidationErrors({ mutation: `${message}. ${errors.join(', ')}` });
+            }
+        },
+        onError: (error) => {
+            console.error("Update profile error:", error);
+            setProfileValidationErrors({ mutation: error.message || translate("errorOccured") || "An error occurred" });
+        }
     });
 
     // Change password mutation
@@ -69,6 +161,50 @@ export default function Settings() {
             setPasswordError(error.message || translate("errorOccured") || "An error occurred");
         }
     });
+
+    // Handle profile update
+    const handleSaveProfile = async () => {
+        setProfileValidationErrors({});
+        setProfileSuccess("");
+
+        // Combine country code and phone number
+        const phone = `${countryCode}${phoneNumber}`;
+
+        // Validate phone
+        const phoneError = validatePhoneNumber(phone);
+        if (phoneError) {
+            setProfileValidationErrors({ phone: phoneError });
+            return;
+        }
+
+        // Validate telegram username
+        const tgUsernameError = validateTelegramUsername(tgUsername);
+        if (tgUsernameError) {
+            setProfileValidationErrors({ tgUsername: tgUsernameError });
+            return;
+        }
+
+        // Check if there are any changes
+        const currentPhone = data?.me?.phone || "";
+        const currentTgUsername = data?.me?.tgUsername || "";
+
+        if (phone === currentPhone && tgUsername === currentTgUsername) {
+            setProfileValidationErrors({ general: translate("noChanges") || "No changes detected" });
+            return;
+        }
+
+        // Call the mutation
+        try {
+            await updateProfile({
+                variables: {
+                    phone,
+                    tgUsername
+                }
+            });
+        } catch (err) {
+            console.error("Update profile error:", err);
+        }
+    };
 
     // Handle password change
     const handlePasswordChange = async () => {
@@ -211,6 +347,177 @@ export default function Settings() {
                             {user.role}
                         </div>
                     </div>
+
+                    {/* Profile Editing Section - Only for admins and teachers */}
+                    {canEditProfile && (
+                        <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
+                            {/* Success Message */}
+                            {profileSuccess && (
+                                <div
+                                    className="mb-4 p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"
+                                    style={{
+                                        backgroundColor: isDarkMode ? 'rgba(20, 83, 45, 0.2)' : '#f0fdf4',
+                                        borderColor: isDarkMode ? '#166534' : '#bbf7d0'
+                                    }}
+                                >
+                                    <p className="text-green-700 dark:text-green-300 text-sm">{profileSuccess}</p>
+                                </div>
+                            )}
+
+                            {/* Error Messages */}
+                            {profileValidationErrors.mutation && (
+                                <div
+                                    className="mb-4 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
+                                    style={{
+                                        backgroundColor: isDarkMode ? 'rgba(127, 29, 29, 0.2)' : '#fef2f2',
+                                        borderColor: isDarkMode ? '#991b1b' : '#fecaca'
+                                    }}
+                                >
+                                    <p className="text-red-700 dark:text-red-300 text-sm">{profileValidationErrors.mutation}</p>
+                                </div>
+                            )}
+
+                            <div className="flex items-center justify-between mb-4">
+                                <h3
+                                    className="text-lg font-medium"
+                                    style={{
+                                        color: isDarkMode ? '#f3f4f6' : '#1f2937'
+                                    }}
+                                >
+                                    {translate("profile") || "Profile"}
+                                </h3>
+                                {!isEditingProfile ? (
+                                    <button
+                                        onClick={() => setIsEditingProfile(true)}
+                                        className="px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 border"
+                                        style={{
+                                            backgroundColor: isDarkMode ? '#2563eb' : '#3b82f6',
+                                            borderColor: isDarkMode ? '#2563eb' : '#3b82f6',
+                                            color: '#ffffff'
+                                        }}
+                                    >
+                                        {translate("edit") || "Edit"}
+                                    </button>
+                                ) : (
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={handleSaveProfile}
+                                            disabled={profileLoading}
+                                            className="px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 border"
+                                            style={{
+                                                backgroundColor: isDarkMode ? '#16a34a' : '#22c55e',
+                                                borderColor: isDarkMode ? '#16a34a' : '#22c55e',
+                                                color: '#ffffff'
+                                            }}
+                                        >
+                                            {profileLoading ? translate("saving") || "Saving..." : translate("save") || "Save"}
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setIsEditingProfile(false);
+                                                setProfileValidationErrors({});
+                                                // Reset to original values
+                                                const phone = user.phone || "";
+                                                if (phone.startsWith("998")) {
+                                                    setCountryCode("998");
+                                                    setPhoneNumber(phone.substring(3));
+                                                } else if (phone.startsWith("90")) {
+                                                    setCountryCode("90");
+                                                    setPhoneNumber(phone.substring(2));
+                                                }
+                                                setTgUsername(user.tgUsername || "");
+                                            }}
+                                            className="px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 border"
+                                            style={{
+                                                backgroundColor: 'transparent',
+                                                borderColor: isDarkMode ? '#6b7280' : '#9ca3af',
+                                                color: isDarkMode ? '#d1d5db' : '#6b7280'
+                                            }}
+                                        >
+                                            {translate("cancel") || "Cancel"}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Telegram Username */}
+                            <div>
+                                <label className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide block mb-2">
+                                    {translate("telegram") || "Telegram Username"}
+                                </label>
+                                {isEditingProfile ? (
+                                    <input
+                                        type="text"
+                                        value={tgUsername}
+                                        onChange={(e) => setTgUsername(e.target.value)}
+                                        disabled={profileLoading}
+                                        className="w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                                        style={{
+                                            backgroundColor: isDarkMode ? '#374151' : '#f9fafb',
+                                            borderColor: profileValidationErrors.tgUsername ? '#ef4444' : (isDarkMode ? '#4b5563' : '#e5e7eb'),
+                                            color: isDarkMode ? '#f3f4f6' : '#111827'
+                                        }}
+                                    />
+                                ) : (
+                                    <div
+                                        className="px-4 py-3 rounded-xl border-2 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-gray-600"
+                                    >
+                                        {user.tgUsername || '-'}
+                                    </div>
+                                )}
+                                {profileValidationErrors.tgUsername && (
+                                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">{profileValidationErrors.tgUsername}</p>
+                                )}
+                            </div>
+
+                            {/* Phone Number */}
+                            <div>
+                                <label className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide block mb-2">
+                                    {translate("phoneNumber") || "Phone Number"}
+                                </label>
+                                {isEditingProfile ? (
+                                    <div className="flex gap-2">
+                                        <select
+                                            value={countryCode}
+                                            onChange={(e) => setCountryCode(e.target.value)}
+                                            disabled={profileLoading}
+                                            className="w-24 px-3 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                                            style={{
+                                                backgroundColor: isDarkMode ? '#374151' : '#f9fafb',
+                                                borderColor: profileValidationErrors.phone ? '#ef4444' : (isDarkMode ? '#4b5563' : '#e5e7eb'),
+                                                color: isDarkMode ? '#f3f4f6' : '#111827'
+                                            }}
+                                        >
+                                            <option value="998">+998</option>
+                                            <option value="90">+90</option>
+                                        </select>
+                                        <input
+                                            type="text"
+                                            value={phoneNumber}
+                                            onChange={(e) => setPhoneNumber(e.target.value)}
+                                            disabled={profileLoading}
+                                            placeholder="901234567"
+                                            className="flex-1 px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                                            style={{
+                                                backgroundColor: isDarkMode ? '#374151' : '#f9fafb',
+                                                borderColor: profileValidationErrors.phone ? '#ef4444' : (isDarkMode ? '#4b5563' : '#e5e7eb'),
+                                                color: isDarkMode ? '#f3f4f6' : '#111827'
+                                            }}
+                                        />
+                                    </div>
+                                ) : (
+                                    <div
+                                        className="px-4 py-3 rounded-xl border-2 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-gray-600"
+                                    >
+                                        {user.phone ? `+${user.phone}` : '-'}
+                                    </div>
+                                )}
+                                {profileValidationErrors.phone && (
+                                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">{profileValidationErrors.phone}</p>
+                                )}
+                            </div>
+                        </div>
+                    )}
 
                     {/* Password Change Section */}
                     <div className="pt-6 border-t border-gray-200 dark:border-gray-700">

@@ -11,7 +11,7 @@ export function getSubdomainRole() {
 
 	// If localhost, use the environment variable SUB_DOMAIN
 	if (host === "localhost") {
-		return import.meta.env.SUB_DOMAIN || "root";
+		return import.meta.env.SUB_DOMAIN || "admin";
 	}
 
 	const parts = host.split(".");
