@@ -4,6 +4,7 @@ import { useQuery, useMutation } from "@apollo/client/react";
 import { gql } from "@apollo/client";
 import { useTranslation } from "react-i18next";
 import { validateAdminEditForm } from "../../utils/validators";
+import { useDarkMode } from "../../contexts/DarkModeContext";
 
 const GET_ADMIN = gql`
   query GetAdmin($id: ID!) {
@@ -60,6 +61,7 @@ const CHANGE_ADMIN = gql`
 export default function AdminPage() {
     const { id } = useParams();
     const { t: translate } = useTranslation();
+    const { isDarkMode } = useDarkMode();
     const [isEditing, setIsEditing] = useState(false);
     const [validationErrors, setValidationErrors] = useState({});
     const [isActive, setIsActive] = useState(false);
@@ -236,22 +238,50 @@ export default function AdminPage() {
     const admin = data.getAdmin;
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div
+            className="min-h-screen bg-gray-50 dark:bg-gray-900"
+            style={{
+                backgroundColor: isDarkMode ? '#111827' : '#f9fafb'
+            }}
+        >
             <div className="max-w-4xl mx-auto px-4 py-8">
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-light text-gray-900 dark:text-white mb-2">{translate("adminDetails")}</h1>
-                    <div className="w-16 h-0.5 bg-blue-500 dark:bg-blue-400"></div>
+                    <h1
+                        className="text-3xl font-light text-gray-900 dark:text-white mb-2"
+                        style={{
+                            color: isDarkMode ? '#ffffff' : '#111827'
+                        }}
+                    >
+                        {translate("adminDetails")}
+                    </h1>
+                    <div
+                        className="w-16 h-0.5 bg-blue-500 dark:bg-blue-400"
+                        style={{
+                            backgroundColor: isDarkMode ? '#60a5fa' : '#3b82f6'
+                        }}
+                    ></div>
                 </div>
 
                 {/* Main Card */}
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div
+                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
+                    style={{
+                        backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
+                        borderColor: isDarkMode ? '#374151' : '#f3f4f6'
+                    }}
+                >
                     {/* Form */}
                     <form id="admin-edit-form" className="p-8" onSubmit={handleSave}>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             {/* ID Field */}
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+                                <label
+                                    className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide"
+                                    style={{
+                                        color: isDarkMode ? '#d1d5db' : '#4b5563'
+                                    }}
+                                >
                                     {translate("id")}
                                 </label>
                                 <input
