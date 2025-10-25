@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import ToggleButtonAdminsTable from "./ToggleButton.AdminsTable.jsx";
-import DeleteAdminButton from "./DeleteAdmin.AdminsTable.jsx";
+import ToggleButtonAdminsTable from "./ToggleButton.jsx";
+import DeleteAdminButton from "./DeleteButton.jsx";
 
 const AdminsTable = function AdminsTable({ loading, admins, onAdminDeleted }) {
     const navigate = useNavigate();

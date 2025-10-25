@@ -1,7 +1,7 @@
 import { memo, useEffect, useState } from "react";
 import AddAdminFormHeader from "../FormHeader.jsx";
 import AddAdminForm from "./AddAdminForm.jsx";
-import { useDarkMode } from "../../../../contexts/DarkModeContext";
+import { useDarkMode } from "../../../../../../contexts/DarkModeContext";
 
 function AddAdminModal({
     isOpen,
