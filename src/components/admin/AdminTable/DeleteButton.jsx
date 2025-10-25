@@ -7,7 +7,13 @@ import { useDarkMode } from "../../../contexts/DarkModeContext";
 const DELETE_ADMIN_MUTATION = gql`
   mutation DeleteAdmin($id: ID!) {
     deleteAdmin(adminId: $id) {
-      id
+      success
+      message
+      admin {
+        id
+      }
+      errors
+      timestamp
     }
   }
 `;
@@ -19,18 +25,19 @@ export default function DeleteAdminButton({ adminId, onDeleted }) {
     const [deleteAdmin] = useMutation(DELETE_ADMIN_MUTATION, {
         onCompleted: (data) => {
             setLoading(false);
-            if (data.deleteAdmin && data.deleteAdmin.success) {
+            if (data?.deleteAdmin?.success) {
                 if (onDeleted) onDeleted();
             } else {
-                alert(data.deleteAdmin?.message || translate("errorOccured"));
+                const errors = data?.deleteAdmin?.errors || [];
+                const message = data?.deleteAdmin?.message || translate("errorOccured");
+                alert(`${message}. ${errors.join(', ')}`);
             }
         },
         onError: (error) => {
-            console.error(error);
+            console.error("❌ Delete admin error:", error);
             setLoading(false);
             alert(error.message || translate("errorOccured"));
         },
-
     });
 
     const handleDelete = () => {
@@ -52,11 +59,11 @@ export default function DeleteAdminButton({ adminId, onDeleted }) {
             title={translate("delete")}
         >
             {/* Use a more neutral "remove" or cross icon instead of a trash can */}
-            <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="w-5 h-5 text-blue-500" 
-                fill="none" 
-                viewBox="0 0 24 24" 
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 text-blue-500"
+                fill="none"
+                viewBox="0 0 24 24"
                 stroke="currentColor"
                 style={{
                     color: isDarkMode ? '#60a5fa' : '#3b82f6'

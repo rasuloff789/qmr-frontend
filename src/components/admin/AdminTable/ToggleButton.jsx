@@ -7,8 +7,14 @@ import { useDarkMode } from "../../../contexts/DarkModeContext";
 const CHANGE_ADMIN_ACTIVE = gql`
   mutation ChangeAdminActive($id: ID!, $isActive: Boolean!) {
     changeAdminActive(adminId: $id, isActive: $isActive) {
-      id
-      isActive
+      success
+      message
+      admin {
+        id
+        isActive
+      }
+      errors
+      timestamp
     }
   }
 `;
@@ -18,8 +24,18 @@ export default function ToggleButtonAdminsTable({ admin }) {
     const { isDarkMode } = useDarkMode();
     const [isActive, setIsActive] = useState(admin.isActive);
     const [changeAdminActive, { loading }] = useMutation(CHANGE_ADMIN_ACTIVE, {
-        onError: () => alert(translate("errorOccured")),
-        onCompleted: (data) => setIsActive(data.changeAdminActive.isActive),
+        onError: (error) => {
+            console.error("❌ Change admin active error:", error);
+            alert(translate("errorOccured"));
+        },
+        onCompleted: (data) => {
+            if (data?.changeAdminActive?.success) {
+                setIsActive(data.changeAdminActive.admin.isActive);
+            } else {
+                const message = data?.changeAdminActive?.message || translate("errorOccured");
+                alert(message);
+            }
+        },
     });
 
     const handleToggle = async () => {

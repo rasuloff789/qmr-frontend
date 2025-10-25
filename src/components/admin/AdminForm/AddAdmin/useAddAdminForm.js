@@ -14,12 +14,21 @@ export function useAddAdminForm(onAdminAdded = null) {
 		errorPolicy: "all",
 		onCompleted: (data) => {
 			console.log("✅ Admin added successfully:", data);
-			// Clear form and close modal on success
-			dispatch({ type: "CLEAR_FORM" });
-			dispatch({ type: "SET_MODAL", open: false });
-			// Call the callback to refresh the admin list
-			if (onAdminAdded) {
-				onAdminAdded();
+			
+			// Check if mutation was successful
+			if (data?.addAdmin?.success) {
+				// Clear form and close modal on success
+				dispatch({ type: "CLEAR_FORM" });
+				dispatch({ type: "SET_MODAL", open: false });
+				// Call the callback to refresh the admin list
+				if (onAdminAdded) {
+					onAdminAdded();
+				}
+			} else {
+				// Handle backend validation errors
+				const errors = data?.addAdmin?.errors || [];
+				const message = data?.addAdmin?.message || "Failed to add admin";
+				dispatch({ type: "SET_ERRORS", errors: { mutation: `${message}. ${errors.join(', ')}` } });
 			}
 		},
 		onError: (error) => {

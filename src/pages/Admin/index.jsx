@@ -40,13 +40,19 @@ const CHANGE_ADMIN = gql`
       password: $password
       isActive: $isActive
     ) {
-      id
-      username
-      fullname
-      birthDate
-      phone
-      tgUsername
-      isActive
+      success
+      message
+      admin {
+        id
+        username
+        fullname
+        birthDate
+        phone
+        tgUsername
+        isActive
+      }
+      errors
+      timestamp
     }
   }
 `;
@@ -74,9 +80,18 @@ export default function AdminPage() {
     const [changeAdminMutation, { loading: mutationLoading, error: mutationError }] = useMutation(CHANGE_ADMIN, {
         onCompleted: (data) => {
             console.log("✅ Admin updated successfully:", data);
-            setIsEditing(false);
-            // Refetch the admin data to update the UI without page reload
-            refetch();
+            
+            // Check if mutation was successful
+            if (data?.changeAdmin?.success) {
+                setIsEditing(false);
+                // Refetch the admin data to update the UI without page reload
+                refetch();
+            } else {
+                // Handle backend validation errors
+                const errors = data?.changeAdmin?.errors || [];
+                const message = data?.changeAdmin?.message || "Failed to update admin";
+                alert(`${message}. ${errors.join(', ')}`);
+            }
         },
         onError: (error) => {
             console.error("❌ Update admin error:", error);

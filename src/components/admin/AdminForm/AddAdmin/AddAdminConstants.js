@@ -18,9 +18,15 @@ export const ADD_ADMIN = gql`
 			birthDate: $birthDate
 			phone: $phone
 		) {
-			id
-			username
-			fullname
+			success
+			message
+			admin {
+				id
+				username
+				fullname
+			}
+			errors
+			timestamp
 		}
 	}
 `;

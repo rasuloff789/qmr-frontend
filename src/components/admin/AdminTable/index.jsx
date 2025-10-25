@@ -16,13 +16,13 @@ const AdminsTable = function AdminsTable({ loading, admins, onAdminDeleted }) {
 
     return (<>
         {!loading && admins.length > 0 && <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table 
+            <table
                 className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
                 style={{
                     color: isDarkMode ? '#d1d5db' : '#6b7280'
                 }}
             >
-                <thead 
+                <thead
                     className="text-xs text-gray-700 uppercase bg-blue-200 dark:bg-gray-700 dark:text-gray-400"
                     style={{
                         backgroundColor: isDarkMode ? '#374151' : '#bfdbfe',
@@ -40,7 +40,7 @@ const AdminsTable = function AdminsTable({ loading, admins, onAdminDeleted }) {
                         <th scope="col" className="px-4 font-mono font-medium py-3 text-center">{translate("actions")}</th>
                     </tr>
                 </thead>
-                <tbody 
+                <tbody
                     className="divide-y divide-gray-200 dark:divide-gray-700"
                     style={{
                         borderColor: isDarkMode ? '#374151' : '#e5e7eb'
@@ -56,8 +56,8 @@ const AdminsTable = function AdminsTable({ loading, admins, onAdminDeleted }) {
                             }}
                             onClick={() => handleRowClick(admin.id)}
                         >
-                            <th 
-                                scope="col" 
+                            <th
+                                scope="col"
                                 className="px-4 font-normal py-3"
                                 style={{
                                     color: isDarkMode ? '#f3f4f6' : '#111827'
@@ -65,8 +65,8 @@ const AdminsTable = function AdminsTable({ loading, admins, onAdminDeleted }) {
                             >
                                 {admin.id}
                             </th>
-                            <th 
-                                scope="col" 
+                            <th
+                                scope="col"
                                 className="px-4 font-normal py-3"
                                 style={{
                                     color: isDarkMode ? '#f3f4f6' : '#111827'
@@ -74,8 +74,8 @@ const AdminsTable = function AdminsTable({ loading, admins, onAdminDeleted }) {
                             >
                                 {admin.fullname}
                             </th>
-                            <th 
-                                scope="col" 
+                            <th
+                                scope="col"
                                 className="px-4 font-normal py-3"
                                 style={{
                                     color: isDarkMode ? '#f3f4f6' : '#111827'
@@ -83,8 +83,8 @@ const AdminsTable = function AdminsTable({ loading, admins, onAdminDeleted }) {
                             >
                                 {admin.username}
                             </th>
-                            <th 
-                                scope="col" 
+                            <th
+                                scope="col"
                                 className="px-4 font-normal py-3"
                                 style={{
                                     color: isDarkMode ? '#f3f4f6' : '#111827'
@@ -92,8 +92,8 @@ const AdminsTable = function AdminsTable({ loading, admins, onAdminDeleted }) {
                             >
                                 <a href={"tel:+" + admin.phone}>{"+" + admin.phone}</a>
                             </th>
-                            <th 
-                                scope="col" 
+                            <th
+                                scope="col"
                                 className="px-4 font-normal py-3 text-blue-600 dark:text-blue-500 hover:underline text-center"
                                 style={{
                                     color: isDarkMode ? '#60a5fa' : '#2563eb'
@@ -105,8 +105,8 @@ const AdminsTable = function AdminsTable({ loading, admins, onAdminDeleted }) {
                                     </svg>
                                 </a>
                             </th>
-                            <th 
-                                scope="col" 
+                            <th
+                                scope="col"
                                 className="px-4 font-normal py-3"
                                 style={{
                                     color: isDarkMode ? '#f3f4f6' : '#111827'
@@ -138,7 +138,7 @@ const AdminsTable = function AdminsTable({ loading, admins, onAdminDeleted }) {
         </div>}
         {
             !loading && !admins.length && (
-                <div 
+                <div
                     className="flex-1 flex items-center justify-center h-64 shadow-md border-gray-600 dark:border-gray-700 border sm:rounded-lg text-gray-500 dark:text-gray-400 text-lg"
                     style={{
                         borderColor: isDarkMode ? '#374151' : '#4b5563',
