@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { memo } from "react";
-import AddAdmin from "../../components/AddAdmin";
-import { useDarkMode } from "../../contexts/DarkModeContext";
+import AddAdmin from "../../../../components/admin/AdminForm/AddAdmin";
+import { useDarkMode } from "../../../../contexts/DarkModeContext";
 
 function AdminsPageNoAdmins({ onAddAdmin }) {
     const { t: translate } = useTranslation();

@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { memo } from "react";
-import { useDarkMode } from "../contexts/DarkModeContext";
+import { useDarkMode } from "../../../../contexts/DarkModeContext";
 
 function AdminInputs({
     username,

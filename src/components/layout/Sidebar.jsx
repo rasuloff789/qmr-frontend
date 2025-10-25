@@ -8,10 +8,10 @@ import {
     Book,
     Settings,
 } from "lucide-react";
-import checkUser from "../utils/checkUser";
+import checkUser from "../../utils/checkUser";
 import { t } from "i18next";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useDarkMode } from "../contexts/DarkModeContext";
+import { useDarkMode } from "../../contexts/DarkModeContext";
 
 export function Sidebar() {
     const navigate = useNavigate();

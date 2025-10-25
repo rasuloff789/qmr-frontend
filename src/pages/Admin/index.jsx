@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/client/react";
 import { gql } from "@apollo/client";
 import { useTranslation } from "react-i18next";
-import { validateAdminEditForm } from "../utils/validators";
+import { validateAdminEditForm } from "../../utils/validators";
 
 const GET_ADMIN = gql`
   query GetAdmin($id: ID!) {

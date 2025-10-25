@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from "react";
-import PhoneNumberInput from "../PhoneNumberInput.jsx";
-import AdminInputs from "../AdminInputs.AddAdminModal.jsx";
-import DateTimeInput from "../DateTimeInput.AddAdminModal.jsx";
+import PhoneNumberInput from "../PhoneInput.jsx";
+import AdminInputs from "../AdminInputs.jsx";
+import DateTimeInput from "../DateInput.jsx";
 import AddAdminActions from "./AddAdminActions.jsx";
 import AddAdminError from "./AddAdminError.jsx";
-import { validateAdminInputs } from "../../utils/validators.js";
+import { validateAdminInputs } from "../../../../utils/validators.js";
 
 function AddAdminForm({
     formState,

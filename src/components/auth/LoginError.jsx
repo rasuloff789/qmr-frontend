@@ -1,6 +1,6 @@
 import { t } from "i18next";
 import { memo } from "react";
-import { useDarkMode } from "../contexts/DarkModeContext";
+import { useDarkMode } from "../../contexts/DarkModeContext";
 
 function LoginErr({ onClose, message }) {
     const { isDarkMode } = useDarkMode();

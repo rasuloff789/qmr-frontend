@@ -18,7 +18,7 @@ import React, { useEffect, useMemo } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
-import Loading from "../pages/Loading.jsx";
+import Loading from "../common/Loading";
 
 // GraphQL query to verify user identity
 const ME_QUERY = gql`

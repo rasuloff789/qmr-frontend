@@ -2,9 +2,9 @@ import React, { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react"
-import LoginErr from "../components/LoginErr.jsx";
-import LogInForm from "../components/LogInForm.jsx";
-import { useDarkMode } from "../contexts/DarkModeContext";
+import LoginError from "../../components/auth/LoginError";
+import LoginForm from "../../components/auth/LoginForm";
+import { useDarkMode } from "../../contexts/DarkModeContext";
 
 const LOGIN_MUTATION = gql`
   mutation Login($username: String!, $password: String!, $userType: String!) {
@@ -104,7 +104,7 @@ export default function Login() {
 
     // Memoized form component to prevent unnecessary re-renders
     const memoizedForm = useMemo(() => (
-        <LogInForm
+        <LoginForm
             handleSubmit={handleSubmit}
             username={username}
             setUsername={setUsername}
@@ -123,7 +123,7 @@ export default function Login() {
                 }}
             >
                 {logErr && (
-                    <LoginErr
+                    <LoginError
                         onClose={handleErrorClose}
                         message={errorMessage}
                     />

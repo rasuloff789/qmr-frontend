@@ -15,7 +15,7 @@ import { useMemo, useCallback } from "react";
 import { Sidebar } from "./Sidebar.jsx";
 import { useTranslation } from "react-i18next";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useDarkMode } from "../contexts/DarkModeContext";
+import { useDarkMode } from "../../contexts/DarkModeContext";
 
 /**
  * Layout Component
