@@ -124,21 +124,37 @@ export default function Settings() {
     return (
         <div className="max-w-4xl mx-auto px-4 py-8">
             {/* Header */}
-            <div className="mb-8">
-                <h1
-                    className="text-3xl font-light mb-2"
+            <div className="mb-8 flex items-center justify-between">
+                <div>
+                    <h1
+                        className="text-3xl font-light mb-2"
+                        style={{
+                            color: isDarkMode ? '#ffffff' : '#111827'
+                        }}
+                    >
+                        {translate("settings")}
+                    </h1>
+                    <div
+                        className="w-16 h-0.5 bg-blue-500"
+                        style={{
+                            backgroundColor: isDarkMode ? '#60a5fa' : '#3b82f6'
+                        }}
+                    ></div>
+                </div>
+                
+                {/* Logout Button */}
+                <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200"
                     style={{
-                        color: isDarkMode ? '#ffffff' : '#111827'
+                        backgroundColor: isDarkMode ? '#dc2626' : '#dc2626'
                     }}
                 >
-                    {translate("settings")}
-                </h1>
-                <div
-                    className="w-16 h-0.5 bg-blue-500"
-                    style={{
-                        backgroundColor: isDarkMode ? '#60a5fa' : '#3b82f6'
-                    }}
-                ></div>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    <span>{translate("logout")}</span>
+                </button>
             </div>
 
             {/* Profile Card */}
@@ -322,22 +338,6 @@ export default function Settings() {
                                 </button>
                             </div>
                         )}
-                    </div>
-
-                    {/* Logout Button */}
-                    <div className="flex gap-4 pt-4">
-                        <button
-                            onClick={handleLogout}
-                            className="w-full px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
-                            style={{
-                                backgroundColor: isDarkMode ? '#dc2626' : '#dc2626'
-                            }}
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
-                            {translate("logout")}
-                        </button>
                     </div>
                 </div>
             </div>
