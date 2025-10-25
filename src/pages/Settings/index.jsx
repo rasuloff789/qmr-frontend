@@ -6,7 +6,7 @@ import { useDarkMode } from "../../contexts/DarkModeContext";
 import { useNavigate } from "react-router-dom";
 import { validatePassword, validatePhoneNumber, validateTelegramUsername } from "../../utils/validators";
 
-// Query to get current user data (only fields available on root user type)
+// Query to get current user data (includes admin/teacher fields)
 const ME_QUERY = gql`
   query Me {
     me {
@@ -15,20 +15,11 @@ const ME_QUERY = gql`
       fullname
       role
       __typename
-    }
-  }
-`;
-
-// Query to get admin profile data (for admins only)
-// Using me query with all fields that should work for admin
-const GET_ADMIN_PROFILE = gql`
-  query GetAdminProfileData {
-    me {
-      id
-      role
+      # Admin/Teacher specific fields
       phone
       tgUsername
       birthDate
+      isActive
     }
   }
 `;
@@ -100,30 +91,6 @@ export default function Settings() {
     // Determine if user can edit profile based on ME query data
     const canEditProfileValue = data?.me?.role && (data.me.role.toLowerCase() === "admin" || data.me.role.toLowerCase() === "teacher");
 
-    // Fetch admin profile data if user is admin/teacher
-    const { data: adminData, loading: adminLoading, error: adminError, refetch: refetchAdminProfile } = useQuery(GET_ADMIN_PROFILE, {
-        skip: !canEditProfileValue, // Only fetch if user is admin/teacher
-        errorPolicy: "all",
-        fetchPolicy: "network-only", // Force network request
-        onCompleted: (data) => {
-            console.log("✅ Admin Profile Query Completed:", data);
-            console.log("📱 Admin Profile Data:", data);
-        },
-        onError: (error) => {
-            console.error("❌ Admin Profile Query Error:", error);
-        }
-    });
-
-    // Debug admin query state
-    useEffect(() => {
-        console.log("🔍 Admin Query State:", {
-            skip: !canEditProfileValue,
-            loading: adminLoading,
-            error: adminError,
-            data: adminData
-        });
-    }, [canEditProfileValue, adminLoading, adminError, adminData]);
-
     // Initialize profile editing when user data loads
     useEffect(() => {
         if (data?.me) {
@@ -140,12 +107,12 @@ export default function Settings() {
 
             // Initialize profile fields if editable
             if (canEdit) {
-                // Use admin profile data if available, fallback to ME data
-                const profileData = adminData?.me || data?.me || {};
+                // Use ME query data which includes admin/teacher fields
+                const profileData = data?.me || {};
                 console.log("📱 Admin/Teacher data:", profileData);
 
-                setTgUsername(profileData.tgUsername || data.me.tgUsername || "");
-                const phone = profileData.phone || data.me.phone || "";
+                setTgUsername(profileData.tgUsername || "");
+                const phone = profileData.phone || "";
                 console.log("📞 Phone value:", phone);
 
                 // Extract country code and phone number
@@ -165,7 +132,7 @@ export default function Settings() {
                 }
             }
         }
-    }, [data, adminData]);
+    }, [data]);
 
     // Update profile mutation (for admins and teachers)
     const [updateProfile, { loading: profileLoading }] = useMutation(UPDATE_PROFILE, {
@@ -175,7 +142,6 @@ export default function Settings() {
                 setIsEditingProfile(false);
                 // Refetch user data to update the UI
                 refetch();
-                refetchAdminProfile();
                 setTimeout(() => setProfileSuccess(""), 3000);
             } else {
                 const errors = data?.updateProfile?.errors || [];
@@ -234,7 +200,7 @@ export default function Settings() {
         }
 
         // Check if there are any changes
-        const profileData = adminData?.me || data?.me || {};
+        const profileData = data?.me || {};
         const currentPhone = profileData.phone || "";
         const currentTgUsername = profileData.tgUsername || "";
 
@@ -404,13 +370,10 @@ export default function Settings() {
                             {/* Debug Info */}
                             <div className="mb-4 p-3 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg text-xs">
                                 <p><strong>Debug:</strong> canEditProfile state={canEditProfile.toString()}, computed={canEditProfileValue.toString()}</p>
-                                <p><strong>Admin Query Skip:</strong> {!canEditProfileValue ? "Yes (skipped)" : "No"}</p>
-                                <p><strong>Admin Query Loading:</strong> {adminLoading ? "Yes" : "No"}</p>
-                                <p><strong>Admin Query Error:</strong> {adminError ? JSON.stringify(adminError) : "None"}</p>
-                                <p><strong>tgUsername (user):</strong> {user.tgUsername || "undefined"}</p>
-                                <p><strong>phone (user):</strong> {user.phone || "undefined"}</p>
-                                <p><strong>tgUsername (admin):</strong> {adminData?.me?.tgUsername || "undefined"}</p>
-                                <p><strong>phone (admin):</strong> {adminData?.me?.phone || "undefined"}</p>
+                                <p><strong>tgUsername:</strong> {user.tgUsername || "undefined"}</p>
+                                <p><strong>phone:</strong> {user.phone || "undefined"}</p>
+                                <p><strong>birthDate:</strong> {user.birthDate || "undefined"}</p>
+                                <p><strong>isActive:</strong> {user.isActive ? "true" : user.isActive === false ? "false" : "undefined"}</p>
                                 <p><strong>role:</strong> {user.role || "undefined"}</p>
                             </div>
 
@@ -480,8 +443,7 @@ export default function Settings() {
                                                 setIsEditingProfile(false);
                                                 setProfileValidationErrors({});
                                                 // Reset to original values
-                                                const profileData = adminData?.me || {};
-                                                const phone = profileData.phone || user.phone || "";
+                                                const phone = user.phone || "";
                                                 if (phone.startsWith("998")) {
                                                     setCountryCode("998");
                                                     setPhoneNumber(phone.substring(3));
@@ -489,7 +451,7 @@ export default function Settings() {
                                                     setCountryCode("90");
                                                     setPhoneNumber(phone.substring(2));
                                                 }
-                                                setTgUsername(profileData.tgUsername || user.tgUsername || "");
+                                                setTgUsername(user.tgUsername || "");
                                             }}
                                             className="px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 border"
                                             style={{
@@ -526,7 +488,7 @@ export default function Settings() {
                                     <div
                                         className="px-4 py-3 rounded-xl border-2 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-gray-600"
                                     >
-                                        {adminData?.me?.tgUsername || user.tgUsername || '-'}
+                                        {user.tgUsername || '-'}
                                     </div>
                                 )}
                                 {profileValidationErrors.tgUsername && (
@@ -573,7 +535,7 @@ export default function Settings() {
                                     <div
                                         className="px-4 py-3 rounded-xl border-2 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-gray-600"
                                     >
-                                        {(adminData?.me?.phone || user.phone) ? `+${adminData?.me?.phone || user.phone}` : '-'}
+                                        {user.phone ? `+${user.phone}` : '-'}
                                     </div>
                                 )}
                                 {profileValidationErrors.phone && (
